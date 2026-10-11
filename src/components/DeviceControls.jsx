@@ -11,17 +11,30 @@ const presentation = {
 
 function DeviceNotice({ notice }) {
   const [dismissed, setDismissed] = useState(null);
+  const [leaving, setLeaving] = useState(null);
   useEffect(() => {
     if (!notice) return;
-    const timer = setTimeout(() => setDismissed(notice), 5000);
-    return () => clearTimeout(timer);
+    const duration = notice.error ? 5000 : 1000;
+    const fadeTimer = setTimeout(() => setLeaving(notice), duration - 200);
+    const timer = setTimeout(() => setDismissed(notice), duration);
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(timer);
+    };
   }, [notice]);
 
   if (!notice || dismissed === notice) return null;
   return (
-    <p role="status" className={`device-result${notice.error ? ' is-error' : ''}`}>
-      {notice.text}
-    </p>
+    <div className={`device-notice${leaving === notice ? ' is-leaving' : ''}`}>
+      <div className="device-notice-content">
+        <p
+          role="status"
+          className={`device-result${notice.error ? ' is-error' : ''}`}
+        >
+          {notice.text}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -122,7 +135,9 @@ export default function DeviceControls() {
                   <span />
                 </button>
               </div>
-              <DeviceNotice notice={notices[device.id]} />
+              <div className="device-notice-slot">
+                <DeviceNotice notice={notices[device.id]} />
+              </div>
             </div>
           );
         })}

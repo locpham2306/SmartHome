@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from './Icon';
+import { chartTimeKey } from '../utils/sensorChart';
 import '../styles/sensor-stats.css';
 
 const sensors = [
@@ -39,6 +40,7 @@ const alertLabels = {
 
 export default function SensorStats({
   readings,
+  chart,
   loading,
   error,
   connection,
@@ -62,9 +64,24 @@ export default function SensorStats({
             ? reportedStatus
             : 'UNKNOWN';
         const unit = reading?.unit || sensor.unit;
+        // Lịch sử đã sắp xếp theo thời gian; bỏ chính số đo hiện tại và bản tin trùng.
+        const previous = hasValue
+          ? chart?.[sensor.key]?.findLast(
+              (point) => chartTimeKey(point.time) < chartTimeKey(reading.time),
+            )
+          : null;
+        const delta = previous
+          ? Number((value - previous.value).toFixed(2))
+          : null;
+        const trendText =
+          delta === null
+            ? ''
+            : delta === 0
+              ? 'Không đổi'
+              : `${Math.abs(delta).toLocaleString('vi-VN', { maximumFractionDigits: 2 })} ${sensor.key === 'humidity' ? 'điểm %' : unit}`;
         const connectionLabel =
           connection === 'connected'
-            ? 'Đã kết nối cập nhật trực tiếp'
+            ? ''
             : connection === 'connecting'
               ? 'Đang kết nối…'
               : 'Mất kết nối trực tiếp · Đang thử lại…';
@@ -96,16 +113,33 @@ export default function SensorStats({
                       ? 'Chưa tải được số đo'
                       : 'Chưa có số đo'}
               </div>
+              {delta !== null && (
+                <div
+                  className="stat-trend"
+                  aria-label={`${delta > 0 ? 'Tăng' : delta < 0 ? 'Giảm' : ''} ${trendText} so với lần đo trước`.trim()}
+                >
+                  <Icon
+                    name="arrow"
+                    className={
+                      delta < 0
+                        ? 'arrow-down'
+                        : delta === 0
+                          ? 'arrow-steady'
+                          : ''
+                    }
+                  />
+                  <b>{trendText}</b>
+                  <span>so với lần đo trước</span>
+                </div>
+              )}
               {reading?.time && (
                 <time className="sensor-reading-time" dateTime={reading.time}>
                   Đo lúc {reading.time.replace('T', ' ').split('.')[0]}
                 </time>
               )}
-              <div
-                className={`sensor-live-info ${connection === 'connected' ? 'is-connected' : ''}`}
-              >
-                {connectionLabel}
-              </div>
+              {connectionLabel && (
+                <div className="sensor-live-info">{connectionLabel}</div>
+              )}
               {error && (
                 <div className="sensor-load-error" role="status">
                   <span>{error}</span>

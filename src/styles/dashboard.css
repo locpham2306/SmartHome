@@ -153,7 +153,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Mũi tên và mức thay đổi so với giờ trước; đây là thông tin mẫu trên thẻ. */
+/* Mũi tên và mức thay đổi so với lần đo trước trên thẻ cảm biến. */
 .stat-trend {
   /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
   display: flex;

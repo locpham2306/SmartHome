@@ -35,8 +35,8 @@
   overflow-wrap: anywhere;
 }
 
-.sensor-live-info.is-connected {
-  color: #187344;
+.arrow-steady {
+  transform: rotate(90deg);
 }
 
 .sensor-load-error {

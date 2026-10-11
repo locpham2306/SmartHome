@@ -101,20 +101,20 @@ export default function SensorChart({
 
   return (
     <>
-      <div className="chart-data-status" role="status">
-        {error ? (
-          <>
-            <span>{error}</span>{' '}
-            <button type="button" onClick={onRetry} disabled={loading}>
-              Thử lại biểu đồ
-            </button>
-          </>
-        ) : loading ? (
-          'Đang tải biểu đồ…'
-        ) : (
-          'Tối đa 100 điểm mỗi cảm biến · Tải lịch sử 1 giờ gần nhất'
-        )}
-      </div>
+      {(error || loading) && (
+        <div className="chart-data-status" role="status">
+          {error ? (
+            <>
+              <span>{error}</span>{' '}
+              <button type="button" onClick={onRetry} disabled={loading}>
+                Thử lại biểu đồ
+              </button>
+            </>
+          ) : (
+            'Đang tải biểu đồ…'
+          )}
+        </div>
+      )}
       <svg
         className="sensor-chart"
         ref={chartRef}

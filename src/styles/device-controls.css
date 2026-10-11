@@ -1,5 +1,6 @@
 .device-control-item {
   min-width: 0;
+  position: relative;
 }
 .device-connection,
 .device-result {
@@ -24,4 +25,44 @@
 }
 .device-result.is-error {
   color: #b42318;
+}
+
+.device-notice-slot {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 5px);
+  width: max-content;
+  max-width: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.device-notice-slot .device-result {
+  margin: 0 2px;
+  line-height: 1.4;
+}
+.device-notice {
+  padding: 5px 8px;
+  border: 1px solid #e3ebf7;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgb(15 23 42 / 10%);
+  animation: device-notice-in 180ms ease-out;
+  transition: opacity 200ms ease;
+}
+.device-notice.is-leaving {
+  opacity: 0;
+}
+@keyframes device-notice-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .device-notice {
+    animation: none;
+    transition: none;
+  }
 }
