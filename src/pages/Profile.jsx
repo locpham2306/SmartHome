@@ -1,9 +1,10 @@
 // FILE NÀY TẠO MÀN HỒ SƠ.
 // ProfileSummary hiện tên/ảnh; ContactInformation hiện liên hệ.
 // ResourceCard hiện một tài nguyên; ResourcesSection lặp để hiện tất cả tài nguyên.
-// Profile ở cuối file ghép các phần thành một màn. Nội dung đang viết cố định, không có ô nhập để sửa.
+// Profile ở cuối file ghép các phần thành một màn. Thông tin người dùng lấy từ API, không có ô nhập để sửa.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { apiRequest } from '../services/api';
 import Icon from '../components/Icon';
 import avatar from '../assets/avatar.png';
 
@@ -23,21 +24,21 @@ const resources = [
     description: 'Mô tả API và hướng dẫn tích hợp',
     tag: 'API',
     icon: 'code',
-    href: '',
+    field: 'apiDocsLink',
   },
   {
     title: 'Kho mã GitHub',
     description: 'Mã nguồn và các tệp của dự án',
     tag: 'Mã nguồn',
     icon: 'branch',
-    href: 'https://github.com/locpham2306/SmartHome-Frontend',
+    field: 'githubLink',
   },
   {
     title: 'Thiết kế Figma',
     description: 'Bố cục giao diện và thành phần thiết kế',
     tag: 'Thiết kế',
     icon: 'design',
-    href: 'https://www.figma.com/design/sQtVe7GxLOiEtEIxx1nESq/Untitled?node-id=0-1&p=f&t=cs7f2hkSmGOtrkeT-0',
+    field: 'figmaLink',
   },
 ];
 
@@ -91,15 +92,15 @@ function ResourceIcon({ type }) {
   );
 }
 
-// ảnh đại diện, họ tên và thông tin học tập. Đây là nội dung tĩnh.
-function ProfileSummary() {
+// Ảnh đại diện dùng tệp hiện có; họ tên lấy từ hồ sơ.
+function ProfileSummary({ profile }) {
   return (
     <section className="profile-overview" aria-label="Thông tin hồ sơ">
       <div className="profile-identity">
-        <img className="avatar" src={avatar} alt="Ảnh đại diện Phạm Bảo Lộc" />
+        <img className="avatar" src={avatar} alt="Ảnh đại diện" />
         <div>
           <span className="profile-eyebrow">HỒ SƠ CÁ NHÂN</span>
-          <h2>Phạm Bảo Lộc</h2>
+          <h2>{profile.name || 'Chưa cập nhật tên'}</h2>
           <p>Sinh viên Học viện Công nghệ Bưu chính Viễn thông</p>
         </div>
       </div>
@@ -108,7 +109,7 @@ function ProfileSummary() {
 }
 
 // Danh sách nhãn/giá trị liên hệ; mailto mở ứng dụng email, tel mở trình gọi điện nếu máy hỗ trợ.
-function ContactInformation() {
+function ContactInformation({ profile }) {
   return (
     <section className="profile-contact-card" aria-labelledby="contact-heading">
       <h3 id="contact-heading">
@@ -123,7 +124,7 @@ function ContactInformation() {
             <Icon name="id" />
             Mã sinh viên
           </dt>
-          <dd>B23DCCN493</dd>
+          <dd>{profile.studentId || 'Chưa cập nhật'}</dd>
         </div>
         <div>
           <dt>
@@ -131,9 +132,9 @@ function ContactInformation() {
             Thư điện tử
           </dt>
           <dd>
-            <a href="mailto:LocPB.B23CN493@stu.ptit.edu.vn">
-              LocPB.B23CN493@stu.ptit.edu.vn
-            </a>
+            {profile.email ? (
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            ) : 'Chưa cập nhật'}
           </dd>
         </div>
         <div>
@@ -142,7 +143,9 @@ function ContactInformation() {
             Điện thoại
           </dt>
           <dd>
-            <a href="tel:0946620301">0946620301</a>
+            {profile.phone ? (
+              <a href={`tel:${profile.phone}`}>{profile.phone}</a>
+            ) : 'Chưa cập nhật'}
           </dd>
         </div>
       </dl>
@@ -207,7 +210,7 @@ function ResourceCard({ resource }) {
 }
 
 //lặp mảng để hiện tài nguyên
-function ResourcesSection() {
+function ResourcesSection({ profile }) {
   return (
     <section
       aria-labelledby="resources-heading"
@@ -226,7 +229,10 @@ function ResourcesSection() {
         {/* Duyệt đúng thứ tự khai báo; title dùng làm key nên các tiêu đề tài nguyên cần khác nhau. */}
         {/* lặp map để hiện tài nguyên. */}
         {resources.map((resource) => (
-          <ResourceCard key={resource.title} resource={resource} />
+          <ResourceCard key={resource.title} resource={{
+            ...resource,
+            href: resource.field ? safeResourceUrl(profile[resource.field]) : resource.href,
+          }} />
         ))}
       </div>
     </section>
@@ -234,12 +240,74 @@ function ResourcesSection() {
 }
 
 // Ba khối xếp dọc trong một cột; profile.css phân bổ chiều cao theo viewport, không tạo cuộn trang.
+// Chỉ mở liên kết web hợp lệ từ dữ liệu hồ sơ.
+function safeResourceUrl(value) {
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 export default function Profile() {
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState('');
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let disposed = false;
+    let timedOut = false;
+    setProfile(null);
+    setError('');
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 10000);
+
+    apiRequest('/api/profile/1', { signal: controller.signal })
+      .then((data) => {
+        if (!data || data.id !== 1) throw new Error('Dữ liệu hồ sơ không hợp lệ.');
+        if (!disposed) setProfile(data);
+      })
+      .catch((err) => {
+        if (disposed) return;
+        setError(timedOut ? 'Máy chủ phản hồi quá lâu. Vui lòng thử lại.' : err.message);
+      })
+      .finally(() => clearTimeout(timeout));
+
+    return () => {
+      disposed = true;
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [attempt]);
+
+  if (!profile) {
+    return (
+      <div className="profile-page">
+        <section className="profile-overview" aria-busy={!error}>
+          {error ? (
+            <>
+              <p role="alert" className="text-danger">{error}</p>
+              <button className="btn btn-outline-primary btn-sm" onClick={() => {
+                setError('');
+                setAttempt((value) => value + 1);
+              }}>Thử lại</button>
+            </>
+          ) : <p role="status">Đang tải hồ sơ…</p>}
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-page">
-      <ProfileSummary />
-      <ContactInformation />
-      <ResourcesSection />
+      <ProfileSummary profile={profile} />
+      <ContactInformation profile={profile} />
+      <ResourcesSection profile={profile} />
     </div>
   );
 }
