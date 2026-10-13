@@ -1,6 +1,7 @@
 package com.loc.smart_home.integration.mqtt.listener;
 
 import com.loc.smart_home.config.MqttProperties;
+import com.loc.smart_home.integration.websocket.DeviceConnectionNotifier;
 import com.loc.smart_home.exception.BusinessException;
 import com.loc.smart_home.integration.mqtt.dto.DeviceAckMessage;
 import com.loc.smart_home.integration.mqtt.dto.SensorMessage;
@@ -37,6 +38,7 @@ public class MqttMessageListener implements MqttCallbackExtended {
     private final SensorService sensorService;
     private final DeviceService deviceService;
     private final Validator validator;
+    private final DeviceConnectionNotifier connectionNotifier;
 
     @Setter
     private MqttClient client;
@@ -72,6 +74,7 @@ public class MqttMessageListener implements MqttCallbackExtended {
     @Override
     public void connectionLost(Throwable cause) {
         log.warn("MQTT connection lost", cause);
+        connectionNotifier.notifyStatus("UNKNOWN");
     }
 
     // điểm đầu vào của mọi tin nhắn nhận được
@@ -94,7 +97,18 @@ public class MqttMessageListener implements MqttCallbackExtended {
                 StandardCharsets.UTF_8);
 
         try {
-            if (sensorTopic) {
+            if ("device/status/connection".equals(topic)) {
+                // Đây là trạng thái kết nối của cả ESP32, không phải ACK điều khiển LED.
+                if ("OFFLINE".equals(payload)) {
+                    log.warn("ESP32 mất kết nối. Kiểm tra nguồn điện hoặc Wi-Fi.");
+                    connectionNotifier.notifyStatus("OFFLINE");
+                } else if ("ONLINE".equals(payload)) {
+                    log.info("ESP32 đã kết nối MQTT.");
+                    connectionNotifier.notifyStatus("ONLINE");
+                } else {
+                    log.warn("Discarding invalid ESP32 connection status on topic {}", topic);
+                }
+            } else if (sensorTopic) {
                 SensorMessage sensorMessage = jsonMapper.readValue(payload, SensorMessage.class);
                 // lưu dữ liệu cảm biến
                 sensorService.saveSensorData(sensorMessage);
