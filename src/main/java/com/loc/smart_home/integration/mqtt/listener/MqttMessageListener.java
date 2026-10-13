@@ -1,6 +1,7 @@
 package com.loc.smart_home.integration.mqtt.listener;
 
 import com.loc.smart_home.config.MqttProperties;
+import com.loc.smart_home.integration.mqtt.DeviceStateRestorer;
 import com.loc.smart_home.integration.websocket.DeviceConnectionNotifier;
 import com.loc.smart_home.exception.BusinessException;
 import com.loc.smart_home.integration.mqtt.dto.DeviceAckMessage;
@@ -39,6 +40,7 @@ public class MqttMessageListener implements MqttCallbackExtended {
     private final DeviceService deviceService;
     private final Validator validator;
     private final DeviceConnectionNotifier connectionNotifier;
+    private final DeviceStateRestorer stateRestorer;
 
     @Setter
     private MqttClient client;
@@ -97,7 +99,9 @@ public class MqttMessageListener implements MqttCallbackExtended {
                 StandardCharsets.UTF_8);
 
         try {
-            if ("device/status/connection".equals(topic)) {
+            if ("device/status/restore".equals(topic)) {
+                if (!message.isRetained()) stateRestorer.restore(payload);
+            } else if ("device/status/connection".equals(topic)) {
                 // Đây là trạng thái kết nối của cả ESP32, không phải ACK điều khiển LED.
                 if ("OFFLINE".equals(payload)) {
                     log.warn("ESP32 mất kết nối. Kiểm tra nguồn điện hoặc Wi-Fi.");
