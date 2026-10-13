@@ -2,22 +2,67 @@
   min-width: 0;
   position: relative;
 }
-.device-connection,
 .device-result {
   font-size: 12px;
 }
-.device-connection:empty {
-  display: none;
+.device-connection-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #dce7f7;
+  border-radius: 10px;
+  background: #f5f8fd;
+  color: #52647e;
+  animation: device-notice-in 180ms ease-out;
 }
-.device-connection {
-  color: var(--muted);
-  margin-bottom: 8px;
+.device-connection-banner.is-warning {
+  background: #fff8ef;
+  border-color: #f5dfbe;
+  color: #8a551b;
 }
-.device-connection button {
-  background: none;
-  border: none;
-  color: #2877ff;
-  text-decoration: underline;
+.device-connection-symbol {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgb(82 100 126 / 8%);
+}
+.is-warning .device-connection-symbol {
+  background: #ffecd1;
+  color: #b96c13;
+}
+.device-connection-copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.device-connection-copy strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.device-connection-banner button {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.device-connection-banner button:hover {
+  background: rgb(185 108 19 / 8%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .device-connection-banner { animation: none; }
 }
 .device-result {
   margin: 6px 2px 0;

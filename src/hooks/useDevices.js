@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Client } from '@stomp/stompjs';
+import { apiRequest } from '../services/api';
 import {
   getDevices,
   controlDevice,
@@ -27,6 +28,7 @@ export default function useDevices() {
     ready: false,
     error: '',
     connected: false,
+    boardConnection: 'UNKNOWN',
   });
   const actions = useRef({});
   const toggle = useCallback((id) => actions.current.toggle?.(id), []);
@@ -41,10 +43,12 @@ export default function useDevices() {
       ready: false,
       error: '',
       connected: false,
+      boardConnection: 'UNKNOWN',
     };
     let disposed = false,
       revision = 0,
       refreshing = false;
+    let connectionVersion = 0;
     const completed = new Map();
     const controllers = new Set();
     const update = (patch) => {
@@ -61,6 +65,23 @@ export default function useDevices() {
       } finally {
         clearTimeout(timer);
         controllers.delete(controller);
+      }
+    };
+
+    const acceptConnection = (status) => {
+      if (!['ONLINE', 'OFFLINE', 'UNKNOWN'].includes(status)) return;
+      connectionVersion++;
+      update({ boardConnection: status });
+    };
+    const loadConnection = async () => {
+      const version = connectionVersion;
+      try {
+        const status = await request((signal) =>
+          apiRequest('/api/devices/connection', { signal }));
+        if (!disposed && version === connectionVersion) acceptConnection(status);
+      } catch {
+        if (!disposed && version === connectionVersion)
+          update({ boardConnection: 'UNKNOWN' });
       }
     };
 
@@ -90,7 +111,18 @@ export default function useDevices() {
               return page.items[0];
             }),
           );
-          return { devices, histories };
+          // Đọc lại trạng thái sau lịch sử để không dùng snapshot trước khi lệnh hoàn tất.
+          const latestDevices = await getDevices(signal);
+          if (!Array.isArray(latestDevices))
+            throw new Error('Dữ liệu thiết bị không hợp lệ.');
+          const latestById = new Map(latestDevices.map((device) => [device.id, device]));
+          const syncedDevices = devices.map((device) => {
+            const latest = latestById.get(device.id);
+            if (!latest || !['ON', 'OFF'].includes(latest.status))
+              throw new Error('Dữ liệu thiết bị không hợp lệ.');
+            return { ...device, status: latest.status };
+          });
+          return { devices: syncedDevices, histories };
         });
         if (disposed || revision !== version) return;
         const pending = {},
@@ -118,8 +150,7 @@ export default function useDevices() {
                   'Đã tải lại trạng thái thiết bị. Không xác định được kết quả lệnh trước.',
             };
           }
-          // Lịch sử có thể hoàn tất ngay sau GET devices; SUCCESS xác nhận trạng thái mới.
-          if (history?.status === 'SUCCESS') device.status = history.action;
+          // Lịch sử xác nhận kết quả lệnh, không ghi đè trạng thái hiện tại của thiết bị.
           if (history && terminal.includes(history.status))
             completed.set(device.id, history.id);
         });
@@ -268,7 +299,16 @@ export default function useDevices() {
             });
           }
         });
+        client.subscribe('/topic/device-connection', (message) => {
+          try {
+            const body = JSON.parse(message.body);
+            if (body.success) acceptConnection(body.data);
+          } catch {
+            acceptConnection('UNKNOWN');
+          }
+        });
         update({ connected: true });
+        void loadConnection();
         void refresh();
       },
       onWebSocketClose: () => update({ connected: false }),

@@ -46,10 +46,20 @@ export default function DeviceControls() {
     ready,
     error,
     connected,
+    boardConnection,
     toggle,
     toggleAll,
     retry,
   } = useDevices();
+  const offline = connected && boardConnection === 'OFFLINE';
+  const connectionMessage = error || (!ready
+    ? 'Đang tải trạng thái thiết bị…'
+    : !connected
+      ? 'Đang kết nối lại với máy chủ…'
+      : offline
+        ? 'Kiểm tra nguồn điện hoặc Wi-Fi của ESP32.'
+        : !devices.length ? 'Chưa có thiết bị.' : '');
+  const connectionWarning = !!error || offline || (ready && !connected);
   const busy = Object.keys(pending).length > 0;
   const allOn =
     devices.length > 0 && devices.every((device) => device.status === 'ON');
@@ -71,20 +81,23 @@ export default function DeviceControls() {
           {busy ? 'Đang xử lý…' : allOn ? 'Tắt tất cả' : 'Bật tất cả'}
         </button>
       </div>
-      <div className="device-connection" role="status">
-        {error ||
-          (!ready
-            ? 'Đang tải trạng thái thiết bị…'
-            : !connected
-              ? 'Chưa kết nối cập nhật thiết bị. Đang kết nối lại…'
-              : '')}
-        {error && (
-          <button type="button" onClick={retry}>
-            Thử lại
-          </button>
-        )}
-        {ready && !devices.length && 'Chưa có thiết bị.'}
-      </div>
+      {connectionMessage && (
+        <div className={`device-connection-banner${connectionWarning ? ' is-warning' : ''}`} role="status">
+          <span className="device-connection-symbol" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v6m0 4h.01" />
+            </svg>
+          </span>
+          <div className="device-connection-copy">
+            {connectionWarning && (
+              <strong>{error ? 'Chưa thể cập nhật thiết bị' : offline ? 'Mất kết nối thiết bị' : 'Kết nối bị gián đoạn'}</strong>
+            )}
+            <span>{connectionMessage}</span>
+          </div>
+          {error && <button type="button" onClick={retry}>Thử lại</button>}
+        </div>
+      )}
       <div className="device-list">
         {devices.map((device) => {
           const { title, icon } = presentation[device.name] || {
