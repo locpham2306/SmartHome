@@ -39,4 +39,7 @@ public class User extends BaseEntity {
     @Column(name = "apidocs_link", length = 500)
     private String apiDocsLink;
 
+    @Column(name = "srs_link", length = 500)
+    private String srsLink;
+
 }
