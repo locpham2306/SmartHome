@@ -1,0 +1,144 @@
+/* FILE NÀY CHỈNH RIÊNG MÀN LỊCH SỬ.
+.history-toolbar xếp các ô lọc; .history-table là bảng sáu cột.
+.action-on/off là nhãn Bật/Tắt; .status-badge.success/failed là nhãn Thành công/Thất bại.
+Ví dụ className="status-badge success" trong JSX sẽ nhận kiểu từ .status-badge.success.
+Màu nền giúp phân biệt trạng thái; chữ giữ màu đen, hình nhỏ bên cạnh có màu riêng.
+Khung bảng, cách cuộn và phân trang nằm trong common.css. */
+/* Ô thời gian rộng hơn; ba dropdown còn lại có độ rộng cân nhau. */
+.history-toolbar {
+  /* Cấu hình cột tại mốc kích thước màn hình này: minmax(200px, 1.4fr) repeat(3, minmax(145px, 1fr)). Máy tính đặt bốn ô theo hàng; màn hẹp có ít cột hơn để ô lọc xuống hàng. */
+  grid-template-columns: minmax(200px, 1.4fr) repeat(3, minmax(145px, 1fr));
+}
+/* Giữ sáu cột đủ rộng; màn hẹp cuộn ngang bảng thay vì cuộn cả trang. */
+.history-table {
+  /* Sáu cột cần ít nhất 920px; màn nhỏ sẽ cuộn ngang riêng bảng. */
+  min-width: 920px;
+}
+/* Tên người điều khiển dài được ngắt dòng để không đẩy rộng cột. */
+.history-operator {
+  /* Cho phép tên dài không có khoảng trắng cũng xuống dòng, không phá tỉ lệ cột. */
+  overflow-wrap: anywhere;
+}
+/* Tên thiết bị và icon nằm cùng hàng. */
+.history-device {
+  --device-color: #ee5274;
+  --device-bg: #ffedf2;
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 7px;
+  /* Giữ chữ trên một dòng, không tự xuống dòng. */
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--device-bg);
+}
+.history-device[data-device='Fan'] {
+  --device-color: #ee5274;
+  --device-bg: #ffedf2;
+}
+.history-device[data-device='AC'] {
+  --device-color: #2877ff;
+  --device-bg: #e5eeff;
+}
+.history-device[data-device='Light'],
+.history-device[data-device='Light System'] {
+  --device-color: #f4ae16;
+  --device-bg: #fff5dd;
+}
+.history-device-icon {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  color: var(--device-color);
+}
+.history-device-icon .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+/* Badge thao tác/kết quả: icon nhỏ, đệm gọn và bo góc. */
+.history-action,
+.status-badge {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 5px;
+  /* Giữ Bật/Tắt và Thành công/Thất bại trên một dòng trong nhãn có nền màu. */
+  white-space: nowrap;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: 500;
+  /* Chiều cao dòng cố định kết hợp padding trên/dưới tạo nhãn có nền màu gọn và cân chữ. */
+  line-height: 18px;
+  border-radius: 4px;
+}
+.history-action .ui-icon,
+.status-badge .ui-icon {
+  width: 13px;
+  height: 13px;
+}
+/* Nền xanh lá nhạt cho Bật; icon xanh đậm, chữ giữ màu đen. */
+.action-on {
+  color: #16803c;
+  background: #e2f6e9;
+}
+/* Nền đỏ nhạt cho Tắt, icon đỏ đậm. */
+.action-off {
+  color: #dc2626;
+  background: #fee2e2;
+}
+/* Nền xanh lá sáng cho thành công. */
+.status-badge.success {
+  color: #12813d;
+  background: #dcf9e6;
+}
+/* Nền hồng sáng cho thất bại. */
+.status-badge.failed {
+  color: #d12f50;
+  background: #ffe3eb;
+}
+.status-badge.pending {
+  background: #fff6de;
+}
+.status-badge.timeout {
+  background: #fff0df;
+}
+.status-badge.timeout .ui-icon {
+  color: #b85c00;
+}
+.status-badge.pending .ui-icon {
+  color: #b88500;
+}
+/* Điều chỉnh tại (max-width: 1199px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 1199px) {
+  .history-toolbar {
+    /* Cấu hình cột tại mốc kích thước màn hình này: repeat(3, minmax(0, 1fr)). Máy tính đặt bốn ô theo hàng; màn hẹp có ít cột hơn để ô lọc xuống hàng. */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .history-search {
+    /* Tại mốc kích thước màn hình tương ứng, ô tìm thời gian chiếm cả hàng, ba dropdown nằm hàng sau. */
+    grid-column: 1 / -1;
+  }
+}
+/* Điều chỉnh tại (max-width: 767px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 767px) {
+  .history-toolbar {
+    /* Cấu hình cột tại mốc kích thước màn hình này: 1fr. Máy tính đặt bốn ô theo hàng; màn hẹp có ít cột hơn để ô lọc xuống hàng. */
+    grid-template-columns: 1fr;
+  }
+}
+.action-on .ui-icon {
+  color: #16803c;
+}
+.action-off .ui-icon {
+  color: #dc2626;
+}
+.status-badge.success .ui-icon {
+  color: #12813d;
+}
+.status-badge.failed .ui-icon {
+  color: #d12f50;
+}

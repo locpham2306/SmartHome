@@ -1,0 +1,788 @@
+:root {
+  /* nút tìm kiếm */
+  --primary: #2877ff;
+  /* màu nền */
+  --background: #f5f8fd;
+  --border: #e3ebf7;
+  /* chữ mà đen */
+  --ink: #000;
+  /* chữ nhỏ màu đen */
+  --muted: #000;
+  /* 224px là phần màn hình dành cho menu máy tính; main-layout dùng cùng biến để chừa lề. */
+  --sidebar-width: 224px;
+  /* Khoảng đệm trái/phải thống nhất giữa tiêu đề và nội dung; mốc kích thước màn hình điện thoại giảm còn 16px. */
+  --page-spacing: 24px;
+  --bs-body-font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* Nền trang sáng, chữ đen và cỡ chữ mặc định; các thành phần bên dưới kế thừa. */
+body {
+  margin: 0;
+  font-family: var(--bs-body-font-family);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--background);
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Kích thước icon mặc định; flex-shrink ngăn icon bị bóp khi hàng thiếu chỗ. */
+.ui-icon {
+  width: 20px;
+  height: 20px;
+  /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+  flex-shrink: 0;
+}
+
+/* Khung gốc ứng dụng; quy tắc @media screen phía dưới cố định chiều cao theo phần màn hình đang nhìn thấy. */
+.app-layout {
+  /* Khung ứng dụng cao ít nhất bằng cửa sổ. @media screen phía dưới sẽ đặt lại để không cuộn cả trang. */
+  min-height: 100vh;
+}
+
+/* Menu cố định bên trái, không chạy theo vùng bảng cuộn; z-index giữ menu trên nội dung. */
+.sidebar {
+  /* fixed neo menu vào phần màn hình đang nhìn thấy, độc lập vùng dữ liệu đang cuộn. */
+  position: fixed;
+  /* Trên/phải/dưới/trái: 0/auto/0/0 làm menu bám mép trái và phủ hết chiều cao. */
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
+  padding: 20px 12px;
+  /* màu nền menu */
+  background: #fff;
+  border-right: 1px solid var(--border);
+  /* Đặt menu cao hơn nội dung; nút mở menu điện thoại dùng z-index 21 để vẫn bấm đóng được. */
+  z-index: 20;
+  transition:
+    transform 220ms ease,
+    visibility 220ms;
+}
+
+.menu-closed .sidebar {
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.menu-closed .main-layout {
+  margin-left: 0;
+}
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+}
+
+/* Logo chữ, avatar và tên ứng dụng nằm cùng hàng ở đầu menu. */
+.brand {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  height: 44px;
+  margin-bottom: 28px;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+/* nhà thông minh */
+.brand small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* Ảnh đại diện tròn, dùng chung cho menu và hồ sơ. */
+.brand-avatar,
+.avatar {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+  flex-shrink: 0;
+  background: #e5eeff;
+  color: #2877ff;
+  /* Bo tròn hoàn toàn; với ô vuông sẽ tạo thành hình tròn. */
+  border-radius: 50%;
+  font-weight: 600;
+}
+
+.brand-avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+/* Căn icon với tên màn; rê chuột và active giúp nhận biết lựa chọn hiện tại. */
+.sidebar .nav-link {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #525e6b;
+  /* Giữ chữ trên một dòng, không tự xuống dòng. */
+  white-space: nowrap;
+}
+
+.sidebar .nav-link:hover {
+  background: #f5f8fd;
+  color: var(--ink);
+}
+
+.sidebar .nav-link.active {
+  background: #edf3ff;
+  color: #2877ff;
+}
+
+/* Chừa phần bên trái đúng chiều rộng menu bên trái, tránh nội dung nằm dưới menu. */
+.main-layout {
+  /* Bù đúng chiều rộng menu; ở điện thoại quy tắc phía sau đưa về 0 vì menu bên trái ẩn. */
+  margin-left: var(--sidebar-width);
+  transition: margin-left 220ms ease;
+  /* Cho phép khung nội dung co nhỏ hơn độ rộng tự nhiên của bảng, tránh đẩy tràn cả trang. */
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .sidebar,
+  .main-layout {
+    transition: none;
+  }
+}
+
+/* Hàng tiêu đề chung chứa nút thu/mở menu, icon màn và tên màn. */
+.topbar {
+  min-height: 64px;
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 10px;
+  padding: 16px var(--page-spacing);
+}
+
+.topbar h1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* Icon cạnh tiêu đề dùng chung cho cả bốn màn dù tên class có tiền tố sensor. */
+.sensor-title-icon {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  color: var(--muted);
+}
+
+.sensor-title-icon .ui-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Khoảng đệm bao quanh nội dung; chiều cao còn lại được phân bổ ở @media screen. */
+.page-content {
+  padding: 8px var(--page-spacing) 24px;
+}
+
+/* Kiểu nút chung; biến Bootstrap bên dưới kiểm soát nền/chữ ở các trạng thái. */
+.btn {
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  /* Giữ chữ trên một dòng, không tự xuống dòng. */
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+/* Nút nền xanh luôn dùng chữ trắng, kể cả rê chuột, nhấn và disabled. */
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-bg: #1d4ed8;
+  --bs-btn-hover-border-color: #1d4ed8;
+}
+
+/* Nút phụ nền sáng, viền xám; dùng cho Xóa và điều hướng phân trang. */
+.btn-outline-secondary {
+  --bs-btn-color: #4b5563;
+  --bs-btn-border-color: #d4d9df;
+  --bs-btn-hover-bg: #f3f4f6;
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-border-color: #aeb8c4;
+}
+
+/* Viền focus cho thao tác bàn phím, giúp biết phần tử đang được chọn. */
+:where(button, a, input, select):focus-visible {
+  outline: 2px solid #8eb3ff;
+  outline-offset: 3px;
+}
+
+/* Khóa chiều cao hai màn có bảng; header và bộ lọc đứng yên, chỉ thân bảng nhận phần cuộn. */
+.table-view {
+  /* 100dvh theo chiều cao phần màn hình đang nhìn thấy động, thích ứng thanh địa chỉ điện thoại; khai báo 100vh trước là phương án dự phòng. */
+  height: 100vh;
+  /* 100dvh theo chiều cao phần màn hình đang nhìn thấy động, thích ứng thanh địa chỉ điện thoại; khai báo 100vh trước là phương án dự phòng. */
+  height: 100dvh;
+  min-height: 0;
+  /* Không cho toàn màn bảng tạo thanh cuộn riêng. */
+  overflow: hidden;
+}
+
+.table-view .main-layout {
+  height: 100%;
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+  flex-direction: column;
+}
+
+.table-view .topbar {
+  /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+  flex-shrink: 0;
+}
+
+.table-view .page-content {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Khung trắng dùng chung cho Dữ liệu và Lịch sử; min-height: 0 cho phép vùng bảng co lại trong flex. */
+.sensor-page,
+.history-page {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+  flex-direction: column;
+  /* Khung bảng chiếm phần còn lại của page-content, không lấy chiều cao theo toàn bộ số dòng. */
+  flex: 1;
+  /* Cho thân bảng co lại khi bộ lọc hoặc phân trang cần thêm chiều cao. */
+  min-height: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Bố cục chung của bộ lọc hai màn; số cột cụ thể nằm trong CSS riêng của từng màn. */
+.sensor-toolbar {
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  /* Không cho bộ lọc bị ép thấp để nhường chỗ cho các bản ghi. */
+  flex-shrink: 0;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+}
+
+/* Mốc định vị icon trong ô nhập/dropdown; padding của ô chừa chỗ khi có icon. */
+.sensor-input-wrap {
+  position: relative;
+  /* Cho ô được hẹp lại khi màn nhỏ, tránh nội dung dài kéo cả hàng tràn sang phải. */
+  min-width: 0;
+}
+
+.sensor-input-wrap>.ui-icon {
+  /* Đặt icon chồng vào bên trái ô; icon không chiếm một cột trong form. */
+  position: absolute;
+  top: 11px;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  /* Click lên hình icon vẫn đi xuyên xuống input/select để điều khiển được focus. */
+  pointer-events: none;
+}
+
+.sensor-input-wrap .form-control,
+.sensor-input-wrap .form-select {
+  height: 40px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #d6dbe2;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.sensor-input-wrap .form-select {
+  padding-right: 36px;
+  background-position: right 12px center;
+  background-size: 14px 10px;
+  cursor: pointer;
+}
+
+.sensor-input-wrap>.ui-icon+ :is(.form-control, .form-select) {
+  /* Chỉ ô đứng ngay sau icon mới chừa 38px; dropdown không có icon giữ padding bình thường. */
+  padding-left: 38px;
+}
+
+.sensor-input-wrap .form-control::placeholder {
+  color: #788391;
+  opacity: 1;
+}
+
+.sensor-input-wrap :is(.form-control, .form-select):hover {
+  border-color: #a8b3c2;
+}
+
+.sensor-input-wrap :is(.form-control, .form-select):focus {
+  border-color: #7299df;
+  box-shadow: 0 0 0 2px #2877ff12;
+}
+
+/* Xếp thân bảng và phần phân trang dưới bảng theo chiều dọc; bảng dùng phần chiều cao còn lại. */
+.sensor-table-panel {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+  flex-direction: column;
+  /* Sau bộ lọc, panel lấy chiều cao còn lại và chia nó cho thân bảng cùng phần phân trang dưới bảng. */
+  flex: 1;
+  min-height: 0;
+  /* Chừa hai lề ngang bằng nhau; đầu mục và thân dùng chung khung này. */
+  padding: 0 16px;
+}
+
+/* Nền đầu mục trải hết chiều ngang, kể cả phần phía trên thanh cuộn. */
+.table-heading-surface {
+  /* Đầu mục không bị ép thấp khi số dòng trong thân bảng tăng. */
+  flex-shrink: 0;
+  /* Nền xám bao cả khoảng chừa cho thanh cuộn/scrollbar; bảng tiêu đề bên trong hẹp hơn theo phép đo trong JS. */
+  width: 100%;
+  overflow: hidden;
+  background: #f1f5fc;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Cắt phần đầu mục tràn ngang; ScrollableTable đồng bộ chiều rộng và scrollLeft với thân. */
+.table-fixed-heading {
+  max-width: 100%;
+  /* Giấu phần tiêu đề vượt khỏi khung. Khi kéo bảng ngang, JavaScript kéo phần tiêu đề theo cùng khoảng. */
+  overflow: hidden;
+}
+
+/* Vùng duy nhất nhận cuộn của bảng; chừa khoảng chừa cho thanh cuộn cân hai bên để đầu mục/dữ liệu thẳng cột. */
+.table-body-scroll {
+  flex: 1;
+  min-height: 0;
+  /* Dữ liệu dài hơn khung thì hiện thanh cuộn trong bảng; khung ngoài vẫn giữ nguyên chiều cao. */
+  overflow: auto;
+  /* Chừa khoảng trống bằng nhau ở hai mép bảng để bên có thanh cuộn không làm bảng nhìn lệch. */
+  scrollbar-gutter: stable both-edges;
+  /* Khi cuộn tới đầu/cuối bảng, không truyền cuộn sang vùng cha. */
+  overscroll-behavior: contain;
+}
+
+.table-body-scroll:focus-visible {
+  outline: 2px solid #8eb3ff;
+  outline-offset: -2px;
+}
+
+/* Màu, nền và viền chung cho bảng Bootstrap. */
+.table {
+  --bs-table-color: var(--ink);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: #edf0f3;
+  font-size: 14px;
+}
+
+/* Dùng tỉ lệ colgroup cố định, không để nội dung dài tự đẩy lệch độ rộng cột. */
+.sensor-table,
+.history-table {
+  table-layout: fixed;
+}
+
+/* Căn nội dung ô theo chiều dọc và thống nhất chiều cao các dòng. */
+.table> :not(caption)>*>* {
+  padding: 10px 12px;
+  height: 46px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+
+/* Kiểu đầu mục bảng: cỡ chữ, khoảng cách và độ cao để chữ cân trên/dưới. */
+.table thead th {
+  height: 44px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #626f7f;
+  border: 0;
+}
+
+.table tbody tr:hover td {
+  background: #fafbfc;
+}
+
+.table tbody td {
+  /* Mỗi chữ số có độ rộng bằng nhau giúp so sánh mã, thời gian và số đo theo hàng. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* Footer ngoài vùng cuộn; tổng bản ghi nằm trái, chọn số dòng và nút trang nằm phải. */
+.pagination-footer {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Giữ phần phân trang dưới bảng luôn nhìn thấy dưới bảng thay vì bị thân bảng đẩy ra ngoài. */
+  flex-shrink: 0;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  justify-content: space-between;
+  /* Khi thiếu chiều ngang, nhóm điều khiển được xuống dòng, không làm rộng cả trang. */
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-summary {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pagination-actions {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Kích thước dropdown số bản ghi mỗi trang. */
+.pagination-size {
+  width: 116px;
+  height: 34px;
+  font-size: 12px;
+  border: 1px solid #d6dbe2;
+  border-radius: 5px;
+  color: #4c596a;
+}
+
+/* Xếp các nút trang theo hàng và cho xuống dòng khi khung hẹp. */
+.pagination-buttons {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 4px;
+}
+
+.pagination-ellipsis {
+  padding: 0 3px;
+  color: var(--muted);
+}
+
+.pagination-buttons .btn {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 5px 9px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+.pagination-buttons .btn:disabled {
+  /* Làm mờ nút Trước/Sau không dùng được; thuộc tính disabled ở JSX mới thực sự chặn bấm. */
+  opacity: 0.45;
+}
+
+.pagination-buttons .ui-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* Điều chỉnh tại (max-width: 767px): ẩn/hiện menu điện thoại, thu gọn khoảng đệm và cho phần phân trang dưới bảng xuống dòng. */
+@media (max-width: 767px) {
+  :root {
+    /* Khoảng đệm trái/phải thống nhất giữa tiêu đề và nội dung; mốc kích thước màn hình điện thoại giảm còn 16px. */
+    --page-spacing: 16px;
+  }
+
+  .sidebar {
+    width: 224px;
+    padding-top: 72px;
+    box-shadow: 8px 0 24px #182c5512;
+  }
+
+  .main-layout {
+    /* Bù đúng chiều rộng menu; ở điện thoại quy tắc phía sau đưa về 0 vì menu bên trái ẩn. */
+    margin-left: 0;
+  }
+
+  /* nút đóng mở menu */
+
+  .menu-toggle {
+    position: relative;
+    z-index: 21;
+    /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+    display: inline-flex;
+    padding: 5px;
+    background: #fff;
+  }
+
+  .topbar {
+    gap: 10px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .topbar h1 {
+    font-size: 21px;
+    line-height: 28px;
+  }
+
+  .sensor-title-icon {
+    display: none;
+  }
+
+  .sensor-toolbar {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .sensor-table-panel {
+    /* Chừa hai lề ngang bằng nhau; đầu mục và thân dùng chung khung này. */
+    padding: 0 12px;
+  }
+
+  .pagination-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .pagination-footer {
+    padding: 12px 0;
+    gap: 8px;
+  }
+}
+
+/* Khóa cuộn trang: chiều cao toàn ứng dụng bằng phần màn hình đang nhìn thấy; flex/min-height: 0 dồn vùng cuộn vào thân bảng. */
+@media screen {
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app-layout {
+    /* Dùng phần màn hình đang nhìn thấy động làm giới hạn chiều cao thực của ứng dụng. */
+    height: 100dvh;
+    /* Cho phép khung thu nhỏ theo màn; không bắt nó giữ chiều cao tối thiểu 100vh phía trên. */
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .main-layout {
+    /* Nhận toàn bộ chiều cao app-layout; flex chia phần cho topbar và page-content. */
+    height: 100%;
+    /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+    display: flex;
+    /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+    flex-direction: column;
+  }
+
+  .topbar {
+    /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+    flex-shrink: 0;
+  }
+
+  .page-content {
+    /* Nhận phần chiều cao còn lại sau topbar trong main-layout dạng flex cột. */
+    flex: 1;
+    /* Cho vùng nội dung được co lại. Nếu thiếu dòng này, bảng nhiều dòng có thể đẩy cả trang cao lên. */
+    min-height: 0;
+    /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+    display: flex;
+    /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+    flex-direction: column;
+    /* Chặn cuộn ở cấp nội dung; chỉ table-body-scroll được phép overflow:auto. */
+    overflow: hidden;
+  }
+
+  .page-content>div:not([hidden]) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sensor-title-icon {
+    color: #2877ff;
+  }
+}
+
+/* Điều chỉnh tại screen and (max-width: 767px): ẩn/hiện menu điện thoại, thu gọn khoảng đệm và cho phần phân trang dưới bảng xuống dòng. */
+@media screen and (max-width: 767px) {
+  .page-content {
+    padding-bottom: 12px;
+  }
+}
+
+/* Khi in: ẩn menu/tiêu đề chung và bỏ lề dành cho menu bên trái. */
+@media print {
+
+  .sidebar,
+  .topbar {
+    display: none !important;
+  }
+
+  .main-layout {
+    margin: 0;
+  }
+
+  .page-content {
+    padding: 0;
+  }
+}
+
+/* Quy tắc chữ đen dùng chung cho nhãn và nhãn có nền màu, ghi đè cả lớp tiện ích Bootstrap; icon có quy tắc màu riêng. */
+.app-layout :is(.brand-avatar,
+  .avatar,
+  .nav-link > span,
+  .stat-trend b,
+  .table th,
+  .sensor-time,
+  .sensor-badge,
+  .history-action,
+  .status-badge,
+  .pagination-size,
+  .profile-resource-badge,
+  .profile-resource-note,
+  .text-secondary,
+  .text-muted,
+  .text-body-secondary) {
+  color: #000 !important;
+}
+
+/* Giữ chữ đen trên nút phụ; loại nút nền xanh ra để giữ chữ trắng. */
+.app-layout .btn:not(.btn-primary) {
+  --bs-btn-color: #000;
+  --bs-btn-hover-color: #000;
+  --bs-btn-active-color: #000;
+  --bs-btn-disabled-color: #000;
+  color: #000;
+}
+
+.sensor-input-wrap .form-control::placeholder {
+  color: #000;
+  opacity: 1;
+}
+
+/* Dropdown bộ lọc dùng chung cho Lịch sử và Dữ liệu cảm biến. */
+.filter-select {
+  position: relative;
+  min-width: 0;
+}
+
+.filter-select-trigger {
+  height: 40px;
+  padding-left: 12px;
+  text-align: left;
+  font-size: 14px;
+  border-color: #d6dbe2;
+  border-radius: 6px;
+}
+
+.filter-select-trigger[aria-expanded='true'] {
+  border-color: #7299df;
+  box-shadow: 0 0 0 2px #2877ff12;
+}
+
+.filter-select-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  inset-inline: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #182c551a;
+}
+
+.filter-select-options [role='option'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-select-options [aria-selected='true'] {
+  background: #edf3ff;
+  font-weight: 600;
+}
+
+.filter-select-options .is-active {
+  background: #e5eeff;
+}
+
+.filter-select-options [aria-hidden='true'] {
+  color: var(--primary);
+}

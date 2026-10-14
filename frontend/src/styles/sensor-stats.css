@@ -1,0 +1,67 @@
+.stat-card.sensor-alert-high {
+  border-color: #e09b99;
+  background: #fff7f6;
+}
+
+.stat-card.sensor-alert-low {
+  border-color: #e2c27a;
+  background: #fffcf3;
+}
+
+.sensor-alert-label {
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.sensor-alert-label-high {
+  color: #b42318;
+}
+.sensor-alert-label-low {
+  color: #885600;
+}
+.sensor-alert-label-normal {
+  color: #187344;
+}
+
+.sensor-reading-time,
+.sensor-live-info {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.arrow-steady {
+  transform: rotate(90deg);
+}
+
+.sensor-load-error {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #b42318;
+  overflow-wrap: anywhere;
+}
+
+.sensor-load-error button {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #245fc2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sensor-load-error button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.sensor-load-error button:focus-visible {
+  outline: 2px solid #245fc2;
+  outline-offset: 3px;
+}

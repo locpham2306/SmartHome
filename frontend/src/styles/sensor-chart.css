@@ -1,0 +1,16 @@
+.chart-data-status {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.chart-data-status button {
+  background: none;
+  border: 0;
+  color: #2877ff;
+  text-decoration: underline;
+  padding: 0 4px;
+}
+.chart-data-status button:disabled {
+  opacity: 0.6;
+}

@@ -1,0 +1,526 @@
+/* FILE NÀY CHỈNH RIÊNG MÀN DỮ LIỆU CẢM BIẾN.
+.sensor-search-toolbar là hàng chọn tiêu chí/nhập từ khóa/nút tìm kiếm/nút xóa.
+.sensor-table là bảng; sensor-id/time/value là các ô mã/thời gian/giá trị.
+.sensor-light/humidity/system chọn màu theo loại cảm biến.
+Muốn chỉnh khung bảng, thanh cuộn hoặc phân trang dùng chung, xem common.css.
+Các khối @media phía dưới đổi cách xếp khi cửa sổ hẹp hơn. */
+.sensor-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sensor-toolbar-actions .sensor-search-submit {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.sensor-calendar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #dce4ee;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.sensor-calendar-button:hover,
+.sensor-calendar-button.is-active {
+  background: #edf4ff;
+  border-color: #b8d0f6;
+  color: #245fc2;
+}
+
+.sensor-calendar-button:focus-visible {
+  outline: 2px solid #2877ff;
+  outline-offset: 3px;
+}
+
+.sensor-calendar-button .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.sensor-date-dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 24px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 64px #0f172a26;
+}
+
+.sensor-date-dialog::backdrop {
+  background: #0f172a40;
+  backdrop-filter: blur(3px);
+}
+
+.sensor-date-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sensor-date-heading h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sensor-date-heading .sensor-calendar-button {
+  width: 32px;
+  height: 32px;
+  border-color: transparent;
+  background: #f5f7fa;
+}
+
+.sensor-date-dialog p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.sensor-date-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sensor-date-fields label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sensor-date-fields input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  border: 1px solid #dce4ee;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  color-scheme: light;
+}
+
+.sensor-date-fields input:focus {
+  background: #fff;
+  border-color: #8bb5f5;
+  box-shadow: 0 0 0 3px #2877ff12;
+}
+
+.sensor-date-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f4;
+}
+
+.sensor-date-actions .btn {
+  min-height: 38px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@media (max-width: 400px) {
+  .sensor-date-dialog {
+    padding: 20px;
+  }
+
+  .sensor-date-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sensor-calendar-button {
+    transition: none;
+  }
+}
+
+/* Nhãn Dữ liệu mẫu bên phải tiêu đề màn Dữ liệu; không phải trạng thái kết nối realtime. */
+.sensor-online {
+  margin-left: auto;
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sensor-online i {
+  width: 6px;
+  height: 6px;
+  /* Bo tròn hoàn toàn; với ô vuông sẽ tạo thành hình tròn. */
+  border-radius: 50%;
+  background: #8793a1;
+}
+
+/* Bốn vị trí: tiêu chí, từ khóa, Tìm kiếm và Xóa; ô từ khóa chiếm phần rộng còn lại. */
+.sensor-search-toolbar {
+  /* Các cột bộ lọc tại mốc kích thước màn hình này: 200px minmax(180px, 1fr) auto auto. auto rộng theo nội dung, fr chia phần chiều ngang còn lại. */
+  grid-template-columns: 200px minmax(180px, 1fr) auto auto;
+}
+
+/* icon */
+.sensor-field-select .filter-select-trigger {
+  padding-left: 38px;
+}
+
+/* Hai nút bộ lọc có chiều cao bằng ô nhập, căn icon và chữ ở giữa. */
+.sensor-search-submit,
+.sensor-reset {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding: 8px 14px;
+}
+
+.sensor-search-submit .ui-icon,
+.sensor-reset .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Chiều rộng tối thiểu giữ cột dễ đọc; màn hẹp cuộn ngang trong thân bảng. */
+.sensor-table {
+  /* Mỗi cột tối thiểu 200px để thời gian không lấn cột bên cạnh; màn hẹp cuộn ngang. */
+  min-width: 800px;
+}
+
+/* Căn trái đầu mục GIÁ TRỊ và số đo, thống nhất với các cột còn lại. */
+.sensor-table th:last-child,
+.sensor-table .sensor-value {
+  text-align: left;
+  /* Dịch cả tiêu đề và số đo sang phải 24px so với khoảng đệm chung. */
+  padding-left: 36px;
+}
+
+/* Giữ mã/số đo trên một dòng và nhấn độ đậm nhẹ. */
+.sensor-id,
+.sensor-value {
+  font-weight: 500;
+  /* Giữ chữ trên một dòng, không tự xuống dòng. */
+  white-space: nowrap;
+}
+
+/* Thời gian không tự xuống dòng trong ô. */
+.sensor-time {
+  /* Giữ chữ trên một dòng, không tự xuống dòng. */
+  white-space: nowrap;
+  color: #526071;
+}
+
+/* Ghép icon với tên cảm biến thành nhãn gọn trong ô bảng. */
+/* nhãn loại cảm biến */
+.sensor-table .sensor-badge {
+  /* inline-flex giữ nhãn vừa nội dung nhưng vẫn căn được icon và chữ theo cùng hàng. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  /* Chừa khoảng trống giữa hình cảm biến và tên loại. */
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.sensor-badge .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Màu nhận diện ánh sáng; nền và icon vẫn có màu, chữ bị quy tắc chung đổi về đen. */
+.sensor-light {
+  color: #b88500;
+}
+
+.sensor-humidity {
+  color: #2877ff;
+}
+
+.sensor-system {
+  color: #df4b6b;
+}
+
+/* Điều chỉnh tại (max-width: 1199px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 1199px) {
+  .sensor-search-toolbar {
+    /* Các cột bộ lọc tại mốc kích thước màn hình này: minmax(160px, 0.8fr) minmax(180px, 1fr) auto auto. auto rộng theo nội dung, fr chia phần chiều ngang còn lại. */
+    grid-template-columns: minmax(160px, 0.8fr) minmax(180px, 1fr) auto auto;
+  }
+}
+
+/* Điều chỉnh tại (max-width: 991px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 991px) {
+  .sensor-search-toolbar {
+    /* Các cột bộ lọc tại mốc kích thước màn hình này: repeat(2, minmax(0, 1fr)). auto rộng theo nội dung, fr chia phần chiều ngang còn lại. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Điều chỉnh tại (max-width: 767px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 767px) {
+  .sensor-online {
+    font-size: 11px;
+  }
+}
+
+/* Điều chỉnh tại (max-width: 480px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 480px) {
+  .sensor-search-toolbar>.sensor-input-wrap {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Bố cục theo chiều cao màn: thẻ ở trên, biểu đồ lấy phần còn lại, thiết bị nằm hàng dưới; các quy tắc này ghi đè kiểu cơ sở phía trên. */
+@media screen {
+  .sensor-badge {
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  .sensor-light {
+    background: #fff6de;
+  }
+
+  .sensor-humidity {
+    background: #eaf2ff;
+  }
+
+  .sensor-system {
+    background: #fff0f4;
+  }
+}
+
+.sensor-light .ui-icon {
+  color: #b88500;
+}
+
+.sensor-humidity .ui-icon {
+  color: #2877ff;
+}
+
+.sensor-system .ui-icon {
+  color: #df4b6b;
+}
+
+.range-picker-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.range-picker-fields>button {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  padding: 10px 32px 10px 12px;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.range-picker-fields>button span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.range-picker-fields>button strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.range-picker-fields>button .ui-icon {
+  position: absolute;
+  right: 10px;
+  top: 24px;
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+}
+
+.range-picker-fields>button.is-active {
+  border-color: #94baf4;
+  background: #f0f6ff;
+  box-shadow: 0 0 0 2px #2877ff0a;
+}
+
+.range-picker-fields>button.is-active .ui-icon {
+  color: #2877ff;
+}
+
+.range-calendar {
+  border: 1px solid #e8edf4;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.range-calendar-heading {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 88px 30px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.range-calendar-heading .sensor-calendar-button {
+  width: 30px;
+  height: 32px;
+  border: 0;
+  background: #f8fafc;
+}
+
+.range-calendar-heading .sensor-calendar-button .ui-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.range-calendar-heading .form-select {
+  min-height: 32px;
+  height: 32px;
+  padding: 4px 24px 4px 8px;
+  background-position: right 6px center;
+  border-color: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.range-calendar-heading .filter-select-options {
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.range-calendar-weekdays,
+.range-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+
+.range-calendar-weekdays {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.range-calendar-weekdays span {
+  padding: 6px 0;
+}
+
+.range-calendar-days {
+  row-gap: 5px;
+}
+
+.range-calendar-days button {
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.range-calendar-days button.is-in-range {
+  background: #edf4ff;
+  color: #245fc2;
+  border-radius: 0;
+}
+
+.range-calendar-days button:hover:not(:disabled) {
+  background: #dceaff;
+  color: #245fc2;
+}
+
+.range-calendar-days button.is-selected {
+  background: #2877ff;
+  color: #fff;
+}
+
+.range-calendar-days button.is-selected:hover {
+  background: #2166dd;
+  color: #fff;
+}
+
+.range-calendar-days button:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.range-calendar-days button:focus-visible {
+  outline: 2px solid #2877ff;
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.range-calendar-hint {
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid #f0f3f7;
+  color: #64748b;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 400px) {
+  .range-calendar {
+    padding: 8px;
+  }
+
+  .range-calendar-heading {
+    grid-template-columns: 26px minmax(0, 1fr) 76px 26px;
+    gap: 2px;
+  }
+
+  .range-calendar-heading .sensor-calendar-button {
+    width: 26px;
+  }
+
+  .range-picker-fields>button {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .range-picker-fields>button .ui-icon {
+    display: none;
+  }
+}

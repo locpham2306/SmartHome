@@ -1,0 +1,23 @@
+{
+  "name": "iot-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@stomp/stompjs": "^7.3.0",
+    "bootstrap": "5.3.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "vite": "6.1.0"
+  }
+}

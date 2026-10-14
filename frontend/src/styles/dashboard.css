@@ -1,0 +1,935 @@
+.device-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.device-heading h2 {
+  margin-bottom: 0;
+}
+
+.device-toggle-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid #d7e5fb;
+  border-radius: 8px;
+  background: #edf4ff;
+  color: #245fc2;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+@media (hover: hover) {
+  .device-toggle-all:hover:not(:disabled) {
+    background: #e0ecff;
+    border-color: #b8d0f6;
+  }
+}
+
+.device-toggle-all:active:not(:disabled) {
+  background: #d3e3fc;
+  border-color: #9cbff0;
+}
+
+.device-toggle-all:focus-visible {
+  outline: 2px solid #2877ff;
+  outline-offset: 3px;
+}
+
+.device-toggle-all:disabled {
+  background: #f2f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: wait;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device-toggle-all {
+    transition: none;
+  }
+}
+
+.device-toggle-all .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Ba thẻ số liệu chia đều chiều ngang; cách xếp trên màn lớn/nhỏ phía dưới điều chỉnh theo phần màn hình đang nhìn thấy. */
+.dashboard-stats {
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  /* Chia hàng thành 3 ô rộng bằng nhau. Đổi số 3 sẽ đổi số cột; 1fr nghĩa là mỗi ô nhận một phần bằng nhau. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Khoảng cách giữa các thẻ, không phải padding bên trong thẻ. */
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Nền trắng, viền nhẹ và bo góc thống nhất cho các khối Tổng quan. */
+.stat-card,
+.chart-card,
+.device-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+
+/* Màu, nền và icon của ba thẻ cảm biến */
+
+.stat-card {
+  /* Lấy chính ô số liệu làm mốc để đặt thanh màu: left/right/bottom của thanh sẽ tính từ ô này. */
+  position: relative;
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  /* Đặt icon và khối chữ sát phía trên. Phần @media screen phía dưới sẽ đổi sang căn giữa. */
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 124px;
+  padding: 16px 20px 24px;
+}
+
+/* Căn icon trong ô; màu đỏ/xanh/vàng nhận diện ba cảm biến. */
+.stat-icon {
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  /* Đưa nội dung vào chính giữa ô, cả chiều ngang lẫn chiều dọc. */
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+
+.stat-icon .ui-icon {
+  width: 22px;
+  height: 22px;
+}
+
+
+/* màu 3 cái thẻ */
+.stat-icon.red {
+  color: #ee5274;
+}
+
+.stat-icon.blue {
+  color: #2877ff;
+}
+
+.stat-icon.yellow {
+  color: #e5a000;
+}
+
+/* Nhãn và số đo; tabular-nums giúp chữ số có độ rộng đều. */
+.stat-content {
+  /* Cho ô được hẹp lại khi màn nhỏ, tránh nội dung dài kéo cả hàng tràn sang phải. */
+  min-width: 0;
+}
+
+/* nội dung chính */
+.stat-content h2 {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.stat-content>strong {
+  display: block;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mũi tên và mức thay đổi so với lần đo trước trên thẻ cảm biến. */
+.stat-trend {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat-trend .ui-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.stat-trend b {
+  font-weight: 500;
+  color: #455364;
+}
+
+/* mũi tên giảm */
+.arrow-down {
+  transform: rotate(180deg);
+}
+
+/* Thanh gradient mảnh nằm ở đáy thẻ, không chiếm khoảng trống trong luồng nội dung. */
+.stat-scale {
+  /* Đặt thanh màu riêng ở đáy ô, không để nó chiếm một hàng cùng số đo. */
+  position: absolute;
+  /* Chừa lề trong thẻ; right đối xứng nên chiều dài nền của thanh bám theo độ rộng thẻ. */
+  left: 20px;
+  right: 20px;
+  /* Cố định thanh mức gần đáy, không bị số đo hoặc dòng mô tả đẩy vị trí. */
+  bottom: 10px;
+}
+
+.stat-scale-track {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #f0f2f5;
+}
+
+.stat-scale-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  /* Khi giá trị width thay đổi, thanh mức chuyển dần trong 0,3 giây thay vì nhảy tức thì. */
+  transition: width 0.3s ease;
+}
+
+.stat-scale.red .stat-scale-fill {
+  background: linear-gradient(90deg, #ffd3df, #ee5274);
+}
+
+.stat-scale.blue .stat-scale-fill {
+  background: linear-gradient(90deg, #cae2ff, #2877ff);
+}
+
+.stat-scale.yellow .stat-scale-fill {
+  background: linear-gradient(90deg, #fff0b9, #f4ae16);
+}
+
+/* Hai biểu đồ xếp cạnh nhau; khối thiết bị trải toàn bộ hàng bên dưới. */
+.dashboard-body {
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Khung biểu đồ; min-width: 0 cho phép SVG co theo cột grid. */
+.chart-card {
+  /* Cho ô được hẹp lại khi màn nhỏ, tránh nội dung dài kéo cả hàng tràn sang phải. */
+  min-width: 0;
+  padding: 18px 20px 12px;
+}
+
+/* Tên biểu đồ và chú giải đặt phía trên vùng vẽ. */
+.chart-heading {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 58px;
+  margin-bottom: 8px;
+}
+
+.dashboard-body h2 {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* Chú giải màu cho từng đường; cho phép xuống hàng khi khung hẹp. */
+.chart-legend {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.chart-legend span {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: inline-flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend i {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* vạch chú giải */
+.legend-temperature {
+  background: #ee5274;
+}
+
+.legend-humidity {
+  background: #2877ff;
+}
+
+.legend-light {
+  background: #f4ae16;
+}
+
+/* SVG lấp chiều rộng khung; @media screen cấp chiều cao còn lại bằng flex. */
+.sensor-chart {
+  display: block;
+  width: 100%;
+  /* Chiều cao tự tính theo tỉ lệ hình. Khi xem trên màn hình, quy tắc phía dưới cho biểu đồ dùng phần chiều cao còn lại. */
+  height: auto;
+}
+
+.sensor-chart text {
+  font-family: inherit;
+  fill: #75808e;
+  font-size: 12px;
+}
+
+/* Lưới mảnh, sáng để đọc thang đo mà không lấn các đường dữ liệu. */
+.chart-grid {
+  stroke: #edf0f3;
+  stroke-width: 1;
+}
+
+/* Đường dọc nét đứt đánh dấu thời điểm đang rê chuột. */
+.chart-crosshair {
+  stroke: #9baac0;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+/* Hộp hộp hiện giá trị nền trắng có viền để tách rõ khỏi đường biểu đồ. */
+.chart-tooltip-surface {
+  fill: #fff;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.sensor-chart .chart-tooltip-time {
+  font-weight: 600;
+}
+
+/* Khối điều khiển trải hết hai cột, nằm dưới biểu đồ. */
+.device-panel {
+  /* Kéo ô điều khiển từ mép trái tới mép phải của hàng, tức rộng bằng cả hai ô biểu đồ cộng lại. */
+  grid-column: 1 / -1;
+  padding: 18px 20px;
+}
+
+.device-panel h2 {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 8px;
+}
+
+.device-panel h2 .ui-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+}
+
+/* Ba thiết bị chia đều theo hàng; quy tắc phía dưới tối ưu khoảng cách màn nhỏ. */
+.device-list {
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+/* Căn icon, tên và công tắc trong từng thiết bị. */
+.device-row {
+  /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
+  display: flex;
+  /* Đặt các phần con ở giữa theo chiều ngang của cột, hoặc chiều dọc của hàng. */
+  align-items: center;
+  gap: 12px;
+  padding: 4px 24px;
+  /* Cho ô được hẹp lại khi màn nhỏ, tránh nội dung dài kéo cả hàng tràn sang phải. */
+  min-width: 0;
+  border-right: 1px solid var(--border);
+}
+
+.device-row:first-child {
+  padding-left: 0;
+}
+
+.device-row:last-child {
+  padding-right: 0;
+  border: 0;
+}
+
+/* Ô icon giữ kích thước ổn định; màu/nền chuyển nhẹ khi trạng thái thay đổi. */
+.device-icon {
+  position: relative;
+  /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+  display: grid;
+  /* Đưa nội dung vào chính giữa ô, cả chiều ngang lẫn chiều dọc. */
+  place-items: center;
+  /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  color: #7a8593;
+  background: #f5f8fd;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.device-icon>.ui-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mốc đặt thông báo xử lý; tên vẫn căn giữa với icon vì thông báo dùng position absolute. */
+.device-name {
+  /* Lấy tên thiết bị làm mốc để đặt chữ Đang xử lý… ngay bên dưới. */
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Thông báo Đang xử lý… nằm ngay dưới tên, không đẩy lệch hàng; nowrap tránh tách thành nhiều dòng. */
+.device-pending {
+  position: absolute;
+  /* Đặt thông báo sát dưới tên thiết bị. 100% ở đây là hết chiều cao của tên, không phải hết màn hình. */
+  top: 100%;
+  left: 0;
+  font-size: 9px;
+  line-height: 12px;
+  font-weight: 600;
+  color: #000;
+  /* Giữ Đang xử lý… trên cùng một dòng dù tên thiết bị ngắn. */
+  white-space: nowrap;
+}
+
+/* Trong 500 ms chờ, công tắc mờ và con trỏ chờ; thuộc tính disabled trong JSX chặn thao tác. */
+.device-switch:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* Công tắc dạng viên thuốc; nút tròn trượt sang phải khi có lớp is-on. */
+.device-switch {
+  /* auto đẩy công tắc về phía phải của hàng, phần trống nằm giữa tên và công tắc. */
+  margin-left: auto;
+  width: 38px;
+  height: 22px;
+  border: 0;
+  border-radius: 20px;
+  /* Chừa 3px quanh nút tròn trắng bên trong nền của thanh. */
+  padding: 3px;
+  background: #c2c9d1;
+  /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.device-switch span {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: white;
+  /* Bo tròn hoàn toàn; với ô vuông sẽ tạo thành hình tròn. */
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.device-switch.is-on {
+  background: var(--primary);
+}
+
+.device-switch.is-on span {
+  /* Khi bật, đẩy nút tròn trắng sang phải 16px. Khi tắt, bỏ kiểu này để nút trở về bên trái. */
+  transform: translateX(16px);
+}
+
+/* Quạt bật chuyển xanh và xoay SVG liên tục. */
+.device-fan.is-on {
+  color: #2877ff;
+  background: #edf3fa;
+}
+
+/* quạt xoay */
+.device-fan.is-on>.ui-icon {
+  /* Chạy keyframes xoay trọn vòng trong 1,1 giây, tốc độ đều và lặp vô hạn. */
+  animation: device-fan-spin 1.1s linear infinite;
+  /* Tâm SVG là trục quay, tránh icon xoay lệch quanh góc. */
+  transform-origin: center;
+}
+
+/* Đèn bật có nền vàng, ánh sáng và bóng nhẹ quanh icon. */
+.device-light.is-on {
+  color: #bb8a17;
+  background: #fff4d5;
+  box-shadow: 0 0 10px #e8c66933;
+}
+
+.device-light.is-on>.ui-icon {
+  fill: #ffe5a0;
+  filter: drop-shadow(0 0 3px #efc75966);
+}
+
+/* Điều hòa bật chuyển xanh; thu/đẩy icon lên để chừa chỗ cho luồng gió phía dưới. */
+.device-ac.is-on {
+  color: #2877ff;
+  background: #edf5fa;
+}
+
+.device-ac>.ui-icon {
+  transition: transform 0.2s;
+}
+
+.device-ac.is-on>.ui-icon {
+  transform: translateY(-5px) scale(0.8);
+}
+
+/* SVG luồng gió ẩn mặc định, chỉ hiện và chuyển động khi điều hòa bật. */
+.device-airflow {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  width: 28px;
+  height: 10px;
+  opacity: 0;
+}
+
+.device-ac.is-on .device-airflow {
+  opacity: 1;
+}
+
+.device-ac.is-on .device-airflow path {
+  animation: device-airflow 1.8s ease-in-out infinite;
+}
+
+.device-ac.is-on .device-airflow path:nth-child(2) {
+  /* Bắt đầu ở một thời điểm khác của chu kỳ để ba nét gió không chuyển động đồng loạt. */
+  animation-delay: -0.6s;
+}
+
+.device-ac.is-on .device-airflow path:nth-child(3) {
+  animation-delay: -1.2s;
+}
+
+/* Một vòng quay 360 độ của cánh quạt; thời lượng đặt ở animation của icon. */
+@keyframes device-fan-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Luồng gió dịch ngang và đổi độ mờ; các nét lệch animation-delay tạo nhịp liên tiếp. */
+@keyframes device-airflow {
+
+  0%,
+  100% {
+    transform: translateX(-1px);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateX(2px);
+    opacity: 1;
+  }
+}
+
+/* Điều chỉnh tại (max-width: 1199px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 1199px) {
+  .device-row {
+    padding: 4px 12px;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .stat-icon {
+    display: none;
+  }
+}
+
+/* Điều chỉnh tại (max-width: 991px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 991px) {
+  .dashboard-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .device-list {
+    grid-template-columns: 1fr;
+    margin-top: 12px;
+  }
+
+  .device-row,
+  .device-row:first-child,
+  .device-row:last-child {
+    padding: 12px 0;
+    border-right: 0;
+    border-bottom: 1px solid #edf0f3;
+  }
+
+  .device-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .stat-content>strong {
+    font-size: 26px;
+  }
+}
+
+/* Điều chỉnh tại (max-width: 767px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media (max-width: 767px) {
+  .dashboard-stats {
+    /* Xếp các ô theo 1fr ở kích thước màn này. */
+    grid-template-columns: 1fr;
+    /* Khoảng cách giữa các thẻ, không phải padding bên trong thẻ. */
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat-card {
+    min-height: 118px;
+  }
+
+  .stat-icon {
+    /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+    display: grid;
+  }
+
+  .stat-content>strong {
+    font-size: 28px;
+  }
+
+  .dashboard-body {
+    gap: 12px;
+  }
+
+  .chart-card,
+  .device-panel {
+    padding: 16px;
+  }
+}
+
+/* Tôn trọng cài đặt giảm chuyển động: dừng hiệu ứng xoay/luồng gió và transition. */
+@media (prefers-reduced-motion: reduce) {
+
+  .stat-scale-fill,
+  .device-icon,
+  .device-switch span,
+  .device-ac>.ui-icon {
+    transition: none;
+  }
+
+  .device-fan.is-on>.ui-icon,
+  .device-ac.is-on .device-airflow path {
+    animation: none;
+  }
+}
+
+/* Bố cục theo chiều cao màn: thẻ ở trên, biểu đồ lấy phần còn lại, thiết bị nằm hàng dưới; các quy tắc này ghi đè kiểu cơ sở phía trên. */
+@media screen {
+  .dashboard-panel {
+    height: 100%;
+    /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+    display: grid;
+    /* Hàng trên cao vừa ba ô số liệu; hàng dưới nhận hết phần chiều cao còn lại để đặt biểu đồ và thiết bị. */
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .dashboard-stats {
+    margin-bottom: 0;
+  }
+
+  .stat-card {
+    flex-direction: row;
+    justify-content: flex-start;
+    /* Đặt icon và khối chữ ngang giữa nhau theo chiều cao của ô. */
+    align-items: center;
+    min-height: 136px;
+    gap: 16px;
+  }
+
+  .stat-icon {
+    /* Xếp các phần bên trong theo hàng/cột; số cột được chọn bằng grid-template-columns. */
+    display: grid;
+    /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+  }
+
+  .stat-icon.red {
+    background: #ffedf2;
+  }
+
+  .stat-icon.blue {
+    background: #e5eeff;
+  }
+
+  .stat-icon.yellow {
+    background: #fff5dd;
+  }
+
+  .stat-icon .ui-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dashboard-body {
+    /* Cho phép các biểu đồ co theo chiều cao màn, tránh sinh cuộn trang. */
+    min-height: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Máy tính: hàng biểu đồ co giãn và hàng thiết bị cao theo nội dung; điện thoại phía dưới chuyển thành hai hàng biểu đồ. */
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+  }
+
+  .chart-card {
+    /* Dùng flex cột để tiêu đề ở trên và SVG nhận chiều cao còn lại. */
+    display: flex;
+    /* Xếp các phần bên trong theo chiều dọc: phần viết trước ở trên, phần viết sau ở dưới. */
+    flex-direction: column;
+    /* Cho khung biểu đồ co dưới kích thước tự nhiên của SVG. */
+    min-height: 0;
+    padding: 18px 16px 12px;
+  }
+
+  .chart-heading {
+    /* Không cho phần này bị bóp nhỏ khi các phần bên cạnh cần thêm chỗ. */
+    flex-shrink: 0;
+  }
+
+  .sensor-chart {
+    /* SVG nhận phần trống còn lại của chart-card sau chart-heading. */
+    flex: 1;
+    /* Không để kích thước mặc định của SVG giữ biểu đồ quá cao trên màn thấp. */
+    min-height: 0;
+    /* Biểu đồ dùng chiều cao mà khung chứa cấp cho nó; SensorChart.jsx đo lại rồi vẽ các điểm cho vừa. */
+    height: 100%;
+    max-height: none;
+    margin-block: auto;
+  }
+
+  .device-panel {
+    /* Kéo ô điều khiển từ mép trái tới mép phải của hàng, tức rộng bằng cả hai ô biểu đồ cộng lại. */
+    grid-column: 1 / -1;
+    /* Cho ô được hẹp lại khi màn nhỏ, tránh nội dung dài kéo cả hàng tràn sang phải. */
+    min-width: 0;
+    padding: 18px 16px;
+  }
+
+  .device-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .device-row,
+  .device-row:first-child,
+  .device-row:last-child {
+    padding: 12px 10px;
+    border: 1px solid #e3ebf7;
+    border-radius: 8px;
+    background: #f7faff;
+    gap: 10px;
+  }
+
+  .device-fan {
+    background: #edf2fa;
+  }
+
+  .device-ac {
+    color: #2877ff;
+    background: #e5eeff;
+  }
+
+  .device-light {
+    color: #e5a000;
+    background: #fff5dd;
+  }
+}
+
+/* Điều chỉnh tại screen and (min-width: 768px) and (max-width: 1199px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .device-panel {
+    /* Kéo ô điều khiển từ mép trái tới mép phải của hàng, tức rộng bằng cả hai ô biểu đồ cộng lại. */
+    grid-column: 1 / -1;
+    padding: 12px 16px;
+  }
+
+  .device-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 10px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stat-card {
+    gap: 10px;
+    padding: 14px 12px 24px;
+  }
+
+  .stat-content>strong {
+    font-size: 26px;
+  }
+}
+
+/* Điều chỉnh tại screen and (max-width: 767px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media screen and (max-width: 767px) {
+
+  .dashboard-panel,
+  .dashboard-body {
+    gap: 10px;
+  }
+
+  .dashboard-stats {
+    /* Chia hàng thành 3 ô rộng bằng nhau. Đổi số 3 sẽ đổi số cột; 1fr nghĩa là mỗi ô nhận một phần bằng nhau. */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* Khoảng cách giữa các thẻ, không phải padding bên trong thẻ. */
+    gap: 8px;
+  }
+
+  .stat-card {
+    min-height: 100px;
+    padding: 10px 8px 18px;
+  }
+
+  .stat-icon {
+    display: none;
+  }
+
+  .stat-content h2 {
+    font-size: 11px;
+    min-height: 28px;
+  }
+
+  .stat-content>strong {
+    font-size: 21px;
+    /* Giữ chữ trên một dòng, không tự xuống dòng. */
+    white-space: nowrap;
+  }
+
+  .stat-trend {
+    font-size: 10px;
+    gap: 3px;
+    margin-top: 4px;
+  }
+
+  .stat-trend span {
+    display: none;
+  }
+
+  .stat-scale {
+    /* Chừa lề trong thẻ; right đối xứng nên chiều dài nền của thanh bám theo độ rộng thẻ. */
+    left: 8px;
+    right: 8px;
+    /* Cố định thanh mức gần đáy, không bị số đo hoặc dòng mô tả đẩy vị trí. */
+    bottom: 8px;
+  }
+
+  .dashboard-body {
+    grid-template-columns: 1fr;
+    /* Máy tính: hàng biểu đồ co giãn và hàng thiết bị cao theo nội dung; điện thoại phía dưới chuyển thành hai hàng biểu đồ. */
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .chart-card {
+    padding: 10px 12px 6px;
+  }
+
+  .chart-heading {
+    min-height: 0;
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+
+  .chart-heading h2,
+  .device-panel h2 {
+    font-size: 13px;
+  }
+
+  .chart-legend {
+    font-size: 10px;
+  }
+
+  .device-panel {
+    padding: 10px 12px;
+  }
+
+  .device-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .device-row,
+  .device-row:first-child,
+  .device-row:last-child {
+    padding: 8px 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .device-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .device-icon>.ui-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .device-name {
+    font-size: 11px;
+  }
+
+  .device-switch {
+    margin: 0 10px;
+  }
+
+  .device-airflow {
+    left: 2px;
+    width: 24px;
+    bottom: 1px;
+  }
+}
+
+/* Điều chỉnh tại screen and (max-height: 700px) and (min-width: 768px): đổi số cột hoặc thu gọn kích thước/khoảng cách cho vùng nội dung này. */
+@media screen and (max-height: 700px) and (min-width: 768px) {
+  .stat-card {
+    min-height: 112px;
+  }
+}
+
+.sensor-chart text {
+  fill: #000;
+}
