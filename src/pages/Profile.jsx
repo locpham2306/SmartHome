@@ -20,11 +20,11 @@ const resources = [
     field: 'srsLink',
   },
   {
-    title: 'Tài liệu hệ thống',
-    description: 'Tổng quan và hướng dẫn sử dụng nhà thông minh',
+    title: 'Báo cáo bài tập IoT',
+    description: 'Báo cáo thiết kế, triển khai và kết quả hệ thống Smart Home',
     tag: 'PDF',
     icon: 'document',
-    href: `${import.meta.env.BASE_URL}docs/bai-thuc-hanh-1-iot.pdf`,
+    href: `${import.meta.env.BASE_URL}docs/bao-cao-iot-b23dccn493.pdf`,
   },
   {
     title: 'Tài liệu API',
