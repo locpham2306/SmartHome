@@ -18,5 +18,4 @@ public class UserResponse {
     private String githubLink;
     private String figmaLink;
     private String apiDocsLink;
-    private String srsLink;
 }
