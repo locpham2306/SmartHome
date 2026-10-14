@@ -218,8 +218,8 @@ Ví dụ clamp(10px, 1.6vh, 16px) không nhỏ hơn 10px, không lớn hơn 16px
     flex: 1;
     /* Cho phép danh sách tài nguyên co lại trong khối cha flex. */
     min-height: 0;
-    /* Máy tính chia phần tài nguyên thành bốn hàng bằng nhau để sử dụng phần chiều cao được cấp. */
-    grid-template-rows: repeat(4, minmax(0, 1fr));
+    /* Các tài nguyên chia đều chiều cao, tự thích ứng khi thêm dòng. */
+    grid-auto-rows: minmax(min-content, 1fr);
   }
   .profile-resource-cell {
     /* Cho các phần bên trong xếp cạnh nhau; nếu có flex-direction: column thì chúng xếp từ trên xuống. */
@@ -314,4 +314,82 @@ Ví dụ clamp(10px, 1.6vh, 16px) không nhỏ hơn 10px, không lớn hơn 16px
     margin-left: 0;
     font-size: 10px;
   }
+}
+
+/* Cùng một khung cho tải/lỗi để nút thử lại không làm bố cục nhảy. */
+.profile-load-state {
+  min-width: 0;
+  min-height: 280px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.profile-load-symbol {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  color: #2877ff;
+  background: #edf4ff;
+}
+.profile-load-symbol.is-error {
+  color: #b87324;
+  background: #fff3e2;
+}
+.profile-load-state h2 {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.profile-load-state p {
+  max-width: 390px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.profile-retry-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 156px;
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 1px solid #d5e3ff;
+  border-radius: 8px;
+  background: #edf4ff;
+  color: #2165d5;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.profile-retry-button:hover:not(:disabled) { background: #dfebff; }
+.profile-retry-button:focus-visible { outline: 2px solid #2877ff; outline-offset: 3px; }
+.profile-retry-button:disabled { opacity: .6; cursor: wait; }
+.profile-load-spinner {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #cfdef6;
+  border-top-color: #2877ff;
+  border-radius: 50%;
+  animation: profile-loading 800ms linear infinite;
+}
+@keyframes profile-loading { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .profile-load-spinner { animation: none; }
+  .profile-retry-button { transition: none; }
 }

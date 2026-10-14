@@ -8,10 +8,17 @@ import { apiRequest } from '../services/api';
 import Icon from '../components/Icon';
 import avatar from '../assets/avatar.png';
 
-// Cấu hình bốn dòng tài nguyên: tên, mô tả, nhãn, icon và URL. href rỗng nghĩa là chưa có liên kết.
+// Cấu hình tài nguyên: tên, mô tả, nhãn, icon và URL. href rỗng nghĩa là chưa có liên kết.
 // Mỗi object: title là tên dòng, description là mô tả, tag là nhãn nhỏ, icon chọn hình/màu, href là đích mở.
 // Muốn kích hoạt một tài nguyên chỉ cần điền href; không phải sửa cấu trúc JSX của ResourceCard.
 const resources = [
+  {
+    title: 'Tài liệu SRS',
+    description: 'Đặc tả yêu cầu của hệ thống nhà thông minh',
+    tag: 'SRS',
+    icon: 'document',
+    field: 'srsLink',
+  },
   {
     title: 'Tài liệu hệ thống',
     description: 'Tổng quan và hướng dẫn sử dụng nhà thông minh',
@@ -153,7 +160,6 @@ function ContactInformation({ profile }) {
   );
 }
 // Một dòng tài nguyên: có href thì là liên kết mở tab mới; thiếu href thì là div và hiện ghi chú.
-// tài nguyên 4 thẻ
 function ResourceCard({ resource }) {
   // Có đường dẫn thì Tag="a" để bấm mở được. Chưa có đường dẫn thì Tag="div" để chỉ hiện nội dung.
   const Tag = resource.href ? 'a' : 'div';
@@ -274,7 +280,11 @@ export default function Profile() {
       })
       .catch((err) => {
         if (disposed) return;
-        setError(timedOut ? 'Máy chủ phản hồi quá lâu. Vui lòng thử lại.' : err.message);
+        setError(timedOut
+          ? 'Máy chủ phản hồi quá lâu. Bạn thử kết nối lại nhé.'
+          : err.status === 404
+            ? 'Không tìm thấy thông tin hồ sơ của bạn.'
+            : 'Chưa thể lấy thông tin từ máy chủ. Vui lòng kiểm tra kết nối và thử lại.');
       })
       .finally(() => clearTimeout(timeout));
 
@@ -288,16 +298,28 @@ export default function Profile() {
   if (!profile) {
     return (
       <div className="profile-page">
-        <section className="profile-overview" aria-busy={!error}>
-          {error ? (
-            <>
-              <p role="alert" className="text-danger">{error}</p>
-              <button className="btn btn-outline-primary btn-sm" onClick={() => {
-                setError('');
-                setAttempt((value) => value + 1);
-              }}>Thử lại</button>
-            </>
-          ) : <p role="status">Đang tải hồ sơ…</p>}
+        <section className="profile-load-state" aria-busy={!error} aria-labelledby="profile-load-title">
+          <span className={`profile-load-symbol${error ? ' is-error' : ''}`} aria-hidden="true">
+            {error ? (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 3l18 18M2 8a16 16 0 0 1 3-2m4-2a16 16 0 0 1 13 4M6 12a10 10 0 0 1 3-2m5 0a10 10 0 0 1 4 2M10 16a4 4 0 0 1 4 0" />
+                <circle cx="12" cy="20" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            ) : <span className="profile-load-spinner" />}
+          </span>
+          <div role={error ? 'alert' : 'status'}>
+            <h2 id="profile-load-title">{error ? 'Không tải được hồ sơ' : 'Đang tải hồ sơ'}</h2>
+            <p>{error || 'Đang lấy thông tin của bạn. Vui lòng chờ một chút.'}</p>
+          </div>
+          <button type="button" className="profile-retry-button" disabled={!error} onClick={() => {
+            setError('');
+            setAttempt((value) => value + 1);
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20 7v5h-5M4 17v-5h5M6.1 6.1A8 8 0 0 1 20 12M4 12a8 8 0 0 0 13.9 5.9" />
+            </svg>
+            {error ? 'Thử kết nối lại' : 'Đang tải…'}
+          </button>
         </section>
       </div>
     );
