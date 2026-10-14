@@ -13,7 +13,7 @@ import avatar from '../assets/avatar.png';
 // Muốn kích hoạt một tài nguyên chỉ cần điền href; không phải sửa cấu trúc JSX của ResourceCard.
 const resources = [
   {
-    title: 'Báo cáo bài tập IoT',
+    title: 'Tài liệu hệ thống',
     description: 'Báo cáo thiết kế, triển khai và kết quả hệ thống Smart Home',
     tag: 'PDF',
     icon: 'document',
