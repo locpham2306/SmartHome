@@ -103,12 +103,6 @@ Khung bảng, cách cuộn và phân trang nằm trong common.css. */
 .status-badge.pending {
   background: #fff6de;
 }
-.status-badge.timeout {
-  background: #fff0df;
-}
-.status-badge.timeout .ui-icon {
-  color: #b85c00;
-}
 .status-badge.pending .ui-icon {
   color: #b88500;
 }

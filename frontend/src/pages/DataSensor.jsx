@@ -271,7 +271,7 @@ export default function DataSensor() {
                 <tr key={row.id}>
                   {/* Hiển thị mã gốc; chỉ dùng dấu — khi mã là null/undefined, vẫn giữ mã 0. */}
                   <td className="sensor-id">{row.id ?? '—'}</td>
-                  {/* formatSensorTime chỉ thay T bằng dấu cách, không tính lại múi giờ. */}
+                  {/* Hiển thị đến giây, giữ nguyên múi giờ của dữ liệu. */}
                   <td className="sensor-time">{formatSensorTime(row.time)}</td>
                   <td>
                     <span className={'sensor-badge ' + style.className}>

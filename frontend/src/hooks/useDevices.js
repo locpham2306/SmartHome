@@ -7,11 +7,10 @@ import {
   getLastDeviceCommand,
 } from '../services/devices';
 
-const terminal = ['SUCCESS', 'ERROR', 'TIMEOUT'];
+const terminal = ['SUCCESS', 'ERROR'];
 const resultText = {
   SUCCESS: 'Điều khiển thành công.',
-  ERROR: 'Thiết bị báo lỗi. Vui lòng thử lại.',
-  TIMEOUT: 'Thiết bị không phản hồi trong thời gian chờ.',
+  ERROR: 'Điều khiển thất bại. Vui lòng kiểm tra thiết bị và thử lại.',
 };
 const errorText = {
   DEVICE_COMMAND_PENDING: 'Thiết bị đang xử lý một lệnh khác.',

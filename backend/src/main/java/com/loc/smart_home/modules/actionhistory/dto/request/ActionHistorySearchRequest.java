@@ -29,8 +29,8 @@ public class ActionHistorySearchRequest {
     private String action = "all";
     @NotBlank(message = "action status is required")
     @Pattern(
-            regexp = "all|PENDING|SUCCESS|ERROR|TIMEOUT",
-            message = "action status must be all, ON or OFF"
+            regexp = "all|PENDING|SUCCESS|ERROR",
+            message = "action status must be all, PENDING, SUCCESS or ERROR"
     )
     private String actionStatus = "all";
 }

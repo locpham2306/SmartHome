@@ -109,5 +109,5 @@ export function formatSensorValue(value, unit) {
 // Đổi dấu T thành khoảng trắng cho dễ đọc, không chuyển múi giờ của chuỗi mẫu.
 // Ví dụ "2024-05-18T14:32:01" thành "2024-05-18 14:32:01"; dữ liệu null/undefined thành —.
 export function formatSensorTime(time) {
-  return time == null ? '—' : time.replace('T', ' ');
+  return time == null ? '—' : time.slice(0, 19).replace('T', ' ');
 }

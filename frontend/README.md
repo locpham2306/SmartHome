@@ -77,7 +77,7 @@ kể cả khi giữ nguyên điều kiện; Xóa đặt lại bộ lọc. Có tr
 lỗi kèm nút thử lại và thông báo danh sách rỗng.
 
 Trang Lịch sử tải `GET /api/action-history`, lọc theo thời gian, thiết bị,
-ON/OFF và PENDING/SUCCESS/ERROR/TIMEOUT. Backend phân trang, sắp xếp
+ON/OFF và PENDING/SUCCESS/ERROR. Backend phân trang, sắp xếp
 `createdAt` giảm dần và trả tên người điều khiển trong trường `operator`.
 Các bộ lọc tự áp dụng sau 300 ms; request cũ bị hủy khi đổi điều kiện.
 Lịch sử tải khi mở trang hoặc đổi bộ lọc, chưa tự cập nhật qua WebSocket.
@@ -85,7 +85,7 @@ Lịch sử tải khi mở trang hoặc đổi bộ lọc, chưa tự cập nh�
 Điều khiển thiết bị lấy danh sách và trạng thái từ `GET /api/devices`, gửi
 `POST /api/devices/{id}/control?action=ON|OFF`, rồi nhận kết quả từ
 `/topic/devices`. Nút chờ khi lệnh đang xử lý; trạng thái bật/tắt chỉ đổi theo
-kết quả backend xác nhận. ERROR/TIMEOUT hiển thị thông báo riêng.
+kết quả backend xác nhận. ERROR hiển thị thông báo thất bại, bao gồm cả trường hợp hết thời gian chờ.
 “Bật/Tắt tất cả” gửi từng lệnh cho các thiết bị cần thay đổi, theo dõi kết quả
 riêng từng thiết bị (không phải một giao dịch bật/tắt đồng thời).
 

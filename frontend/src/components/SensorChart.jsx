@@ -73,16 +73,25 @@ export default function SensorChart({
     Math.min(activeX + 12, width - tooltipWidth - 4),
   );
   const tickCount = height < 160 ? 2 : 5;
-  const labelCount = Math.min(times.length, width < 450 ? 3 : 5);
-  const labelTimes = Array.from(
-    { length: labelCount },
-    (_, i) =>
-      times[
-        labelCount === 1
-          ? 0
-          : Math.round((i * (times.length - 1)) / (labelCount - 1))
-      ],
-  );
+  // Chia mốc theo thời gian thực, không theo chỉ số bản ghi: dữ liệu có
+  // khoảng ngắt vẫn giữ các nhãn cách đều, không dồn sát hai đầu biểu đồ.
+  const maxIntervals = Math.max(1, Math.min(6, Math.floor((right - left) / 90)));
+  const desiredStep = Math.max(1000, (last - first) / maxIntervals);
+  const timeSteps = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600]
+    .map((seconds) => seconds * 1000);
+  const timeStep = timeSteps.find((step) => step >= desiredStep)
+    ?? Math.ceil(desiredStep / 3600000) * 3600000;
+  const labelTimes = [];
+  if (times.length) {
+    if (first === last) {
+      labelTimes.push(first);
+    } else {
+      for (let time = Math.ceil(first / timeStep) * timeStep; time <= last; time += timeStep) {
+        labelTimes.push(time);
+      }
+      if (!labelTimes.length) labelTimes.push((first + last) / 2);
+    }
+  }
 
   const showNearestPoint = (event) => {
     const matrix = chartRef.current.getScreenCTM();
@@ -184,7 +193,10 @@ export default function SensorChart({
             </text>
           </g>
         ))}
-        {labelTimes.map((time) => (
+        {labelTimes.map((timestamp) => {
+          const time = new Date(timestamp).toISOString().slice(0, 23);
+          const x = xFor(time);
+          return (
           <g key={time}>
             <line
               x1={xFor(time)}
@@ -193,11 +205,17 @@ export default function SensorChart({
               y2={bottom}
               className="chart-grid"
             />
-            <text x={xFor(time)} y={bottom + 24} textAnchor="middle">
-              {time.slice(11, 19)}
+            <text
+              x={x}
+              y={bottom + 24}
+              className="chart-time-label"
+              textAnchor={x < left + 30 ? 'start' : x > right - 30 ? 'end' : 'middle'}
+            >
+              {time.slice(11, timeStep >= 60000 && first !== last ? 16 : 19)}
             </text>
           </g>
-        ))}
+          );
+        })}
         {series.map(({ values, color, id }) => {
           if (!values.length) return null;
           const points = values.map((point) => [

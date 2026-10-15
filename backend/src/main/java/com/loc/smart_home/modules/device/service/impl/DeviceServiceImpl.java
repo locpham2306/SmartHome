@@ -205,7 +205,8 @@ public class DeviceServiceImpl implements DeviceService {
                         return;
                 }
 
-                history.setStatus(ActionStatus.TIMEOUT);
+                history.setStatus(ActionStatus.ERROR);
+                log.warn("Device command expired without a response: historyId={}", historyId);
                 publishCommandStatus(history);
         }
 

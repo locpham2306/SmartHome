@@ -25,7 +25,6 @@ export const statusLabels = {
   SUCCESS: 'Thành công',
   ERROR: 'Thất bại',
   PENDING: 'Đang xử lý',
-  TIMEOUT: 'Hết thời gian chờ',
   Success: 'Thành công',
   Failed: 'Thất bại',
   Pending: 'Đang xử lý',

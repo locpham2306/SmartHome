@@ -17,7 +17,7 @@ export default function History() {
   const [device, setDevice] = useState('all');
   // Thao tác đang lọc: ON hoặc OFF; all cho phép cả hai.
   const [action, setAction] = useState('all');
-  // Trạng thái BE: SUCCESS, ERROR, PENDING hoặc TIMEOUT; all không giới hạn.
+  // Trạng thái BE: SUCCESS, ERROR hoặc PENDING; all không giới hạn.
   const [status, setStatus] = useState('all');
   // Số dòng/trang, mặc định 20; độc lập với tổng số bản ghi sau lọc.
   const [size, setSize] = useState(20);
@@ -98,7 +98,6 @@ export default function History() {
             { value: 'SUCCESS', label: statusLabels.SUCCESS },
             { value: 'ERROR', label: statusLabels.ERROR },
             { value: 'PENDING', label: statusLabels.PENDING },
-            { value: 'TIMEOUT', label: statusLabels.TIMEOUT },
           ]}
           onChange={(value) => {
             setStatus(value);
@@ -142,7 +141,7 @@ export default function History() {
                 {/* key={row.id} nhận diện dòng trong React; fw-semibold làm mã hơi đậm, text-nowrap giữ thời gian trên một dòng. */}
                 <td className="fw-semibold">{row.id}</td>
                 <td className="text-nowrap">
-                  {row.time?.replace('T', ' ') || '—'}
+                  {row.time?.slice(0, 19).replace('T', ' ') || '—'}
                 </td>
                 {/* Nếu user rỗng/null/undefined thì dùng Chưa xác định; CSS cho phép tên dài ngắt dòng. */}
                 <td className="history-operator">
@@ -196,9 +195,7 @@ export default function History() {
                         ? 'success'
                         : row.status === 'PENDING'
                           ? 'pending'
-                          : row.status === 'TIMEOUT'
-                            ? 'timeout'
-                            : 'failed')
+                          : 'failed')
                     }
                   >
                     <Icon
@@ -207,9 +204,7 @@ export default function History() {
                           ? 'check'
                           : row.status === 'PENDING'
                             ? 'history'
-                            : row.status === 'TIMEOUT'
-                              ? 'history'
-                              : 'close'
+                            : 'close'
                       }
                     />
                     {statusLabels[row.status] || row.status}

@@ -214,10 +214,10 @@ Ví dụ ACK: `{"historyId":120,"action":"ON","status":"SUCCESS"}`.
 4. `DeviceServiceImpl.findExpiredCommandIds(cutoff)` → `ActionHistoryRepository.findExpiredIds(PENDING,cutoff,PageRequest.of(0,100))`.
 5. `ActionHistoryQueries.FIND_EXPIRED_IDS` chọn createdAt<=cutoff, cũ trước, tối đa 100 ID.
 6. Scheduler lặp gọi `deviceService.timeoutCommand(id,cutoff)`, mỗi lần có transaction riêng.
-7. `timeoutCommand()` → findWithLockById() → kiểm tra lại tồn tại/PENDING/thời gian → setStatus(TIMEOUT) → publishCommandStatus().
+7. `timeoutCommand()` → findWithLockById() → kiểm tra lại tồn tại/PENDING/thời gian → setStatus(ERROR) → publishCommandStatus().
 8. Commit → DeviceWebSocketListener → /topic/devices → FE acceptResult() → bỏ chờ, hiện lỗi.
 
-Cutoff chung cho một lượt, mỗi history có createdAt riêng để so. Không đổi thiết bị thành OFF khi timeout. ACK đến sau TIMEOUT hiện bị bỏ. Thời điểm phát hiện có thể muộn hơn 30 giây do chu kỳ quét và tải xử lí.
+Cutoff chung cho một lượt, mỗi history có createdAt riêng để so. Không đổi thiết bị thành OFF khi timeout. ACK đến sau ERROR hiện bị bỏ. Thời điểm phát hiện có thể muộn hơn 30 giây do chu kỳ quét và tải xử lí.
 
 ## 11. Bật/tắt tất cả
 
@@ -315,7 +315,7 @@ Chưa xong: loop() thử requestSavedStates() mỗi 5 giây. ID mới giúp bỏ
 9. `ActionHistoryMapper.toResponse()` đổi createdAt→time, user.name→operator, device.name→device.
 10. PageResponse.from() → BaseResponse → FE load()/setResult() → bảng, nhãn trạng thái, phân trang.
 
-Có bốn trạng thái PENDING/SUCCESS/ERROR/TIMEOUT. Hook có debounce, abort request cũ, timeout, retry. Trang History không subscribe realtime; tải lại khi mở, đổi bộ lọc/trang hoặc retry.
+Có ba trạng thái PENDING/SUCCESS/ERROR. Hook có debounce, abort request cũ, timeout, retry. Trang History không subscribe realtime; tải lại khi mở, đổi bộ lọc/trang hoặc retry.
 
 ## 16. Hồ sơ user 1 và tài nguyên
 
@@ -363,7 +363,7 @@ DeviceConnectionNotifier được MQTT listener gọi trực tiếp, không dùn
 |---|---|
 | Action ON/OFF | Thao tác yêu cầu |
 | DeviceStatus ON/OFF | Trạng thái BE đã lưu |
-| ActionStatus | PENDING/SUCCESS/ERROR/TIMEOUT của một lệnh |
+| ActionStatus | PENDING/SUCCESS/ERROR của một lệnh |
 | ONLINE/OFFLINE/UNKNOWN | Kết nối gần nhất BE biết, lưu RAM |
 | DeviceControlResponse | Response HTTP tiếp nhận lệnh |
 | DeviceCommandStatusResponse | Kết quả cuối cùng và deviceStatus qua WebSocket |
@@ -396,7 +396,7 @@ WebSocket: /ws là endpoint; /topic/sensors là snapshot/cảnh báo; /topic/dev
 
 1. HTTP 202 và MQTT delivery complete không xác nhận LED thực hiện; cần ACK nghiệp vụ có historyId.
 2. Kiểm tra PENDING chưa khóa toàn bộ chuỗi check–insert theo device, nên chưa chống triệt để hai request đồng thời từ hai tab. Khóa history dùng cho ACK/timeout.
-3. ACK muộn sau TIMEOUT bị bỏ. Không khẳng định đã đồng bộ mọi tình huống ACK muộn.
+3. ACK muộn sau ERROR bị bỏ. Không khẳng định đã đồng bộ mọi tình huống ACK muộn.
 4. Mất điện không đổi DB thành OFF; cắm lại khôi phục theo DB. Khôi phục cần BE, DB, broker và mạng hoạt động.
 5. Trạng thái kết nối lưu RAM và bản tin không retain; BE restart có UNKNOWN, có thể bỏ lỡ sự kiện khi không nghe MQTT.
 6. Cảnh báo kết nối hiện không chặn điều khiển theo ONLINE/OFFLINE; cảnh báo ngưỡng không tự bật/tắt thiết bị.
@@ -412,7 +412,7 @@ WebSocket: /ws là endpoint; /topic/sensors là snapshot/cảnh báo; /topic/dev
 3. Bật LED: toggle → send → control → mqttCallback → acknowledge → onCommandStatusChanged → acceptResult.
 4. Bật tất cả: từng lệnh riêng, historyId riêng.
 5. Mở lịch sử và dữ liệu cảm biến: lọc, khoảng ngày rỗng/có ngày, phân trang BE.
-6. Rút nguồn: Last Will, cảnh báo; lệnh không ACK đi tới TIMEOUT.
+6. Rút nguồn: Last Will, cảnh báo; lệnh không ACK đi tới ERROR.
 7. Cắm lại: requestId → đọc DB → restoreSavedStates → ONLINE.
 8. Hồ sơ: GET user 1, phân biệt trường DB và ảnh/PDF tĩnh.
 

@@ -30,6 +30,15 @@ npm run dev
 Frontend sử dụng proxy phát triển để gọi Backend ở cổng 8080.
 Chương trình ESP32 hiện được quản lý riêng, chưa nằm trong repository này.
 
+## Cập nhật trạng thái lệnh (15/10/2026)
+
+Lịch sử lệnh chỉ còn `PENDING`, `SUCCESS`, `ERROR`. Lệnh quá thời gian chờ cũng
+chuyển sang `ERROR`; scheduler vẫn hoạt động để không để lệnh chờ vô hạn.
+Với database từ phiên bản trước, dừng Backend và chạy
+`backend/docs/migrations/2026-10-15-command-error.sql` trên database ứng dụng
+trước khi khởi động bản mới. Script giữ nguyên ID và thông tin lịch sử,
+chỉ chuyển trạng thái cũ sang `ERROR`.
+
 ## Lịch sử Git
 
 Repository này nhập nhánh `main` từ hai repository bằng `git subtree add`, không squash:
