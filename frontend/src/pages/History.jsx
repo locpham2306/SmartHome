@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination';
 import Icon from '../components/Icon';
 import ScrollableTable from '../components/ScrollableTable';
 import FilterSelect from '../components/FilterSelect';
+import CopyTime from '../components/CopyTime';
 
 // Lấy lịch sử đã lưu từ BE; đổi bộ lọc sẽ tải lại danh sách.
 export default function History() {
@@ -141,7 +142,7 @@ export default function History() {
                 {/* key={row.id} nhận diện dòng trong React; fw-semibold làm mã hơi đậm, text-nowrap giữ thời gian trên một dòng. */}
                 <td className="fw-semibold">{row.id}</td>
                 <td className="text-nowrap">
-                  {row.time?.slice(0, 19).replace('T', ' ') || '—'}
+                  <CopyTime value={row.time} />
                 </td>
                 {/* Nếu user rỗng/null/undefined thì dùng Chưa xác định; CSS cho phép tên dài ngắt dòng. */}
                 <td className="history-operator">

@@ -4,13 +4,13 @@ import useSensorSearch from '../hooks/useSensorSearch';
 import {
   buildSensorSearchParams,
   formatSensorValue,
-  formatSensorTime,
 } from '../utils/sensorSearch';
 import Pagination from '../components/Pagination';
 import Icon from '../components/Icon';
 import ScrollableTable from '../components/ScrollableTable';
 import FilterSelect from '../components/FilterSelect';
 import DateRangeCalendar from '../components/DateRangeCalendar';
+import CopyTime from '../components/CopyTime';
 
 // Ánh xạ loại cảm biến sang màu và icon trong cột laoai cam bien
 const sensorStyles = {
@@ -272,7 +272,7 @@ export default function DataSensor() {
                   {/* Hiển thị mã gốc; chỉ dùng dấu — khi mã là null/undefined, vẫn giữ mã 0. */}
                   <td className="sensor-id">{row.id ?? '—'}</td>
                   {/* Hiển thị đến giây, giữ nguyên múi giờ của dữ liệu. */}
-                  <td className="sensor-time">{formatSensorTime(row.time)}</td>
+                  <td className="sensor-time"><CopyTime value={row.time} /></td>
                   <td>
                     <span className={'sensor-badge ' + style.className}>
                       <Icon name={style.icon} />

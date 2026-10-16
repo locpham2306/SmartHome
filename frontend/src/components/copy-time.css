@@ -1,0 +1,34 @@
+.copy-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  white-space: nowrap;
+}
+.copy-time-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: #64748b;
+  background: transparent;
+  cursor: pointer;
+}
+.copy-time-button:hover { color: #2165d5; background: #edf4ff; }
+.copy-time-button:focus-visible { outline: 2px solid #2877ff; outline-offset: 2px; }
+.copy-time-feedback:not(:empty) {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 5;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: #243247;
+  color: white;
+  font-size: 11px;
+  pointer-events: none;
+}
